@@ -37,9 +37,47 @@ public class LasersPTUI {
         in.close();
     }
 
+    public void Add(int row, int col){
+        /**
+         * adds laser at given position, raises error if cannot be placed
+         */
+    }
 
+    public void Display(){
+        /**
+         * displays current lGrid state with no status message.
+         */
+    }
 
+    public void Help(){
+        /**
+         * The help command displays the help message to standard output,
+         * with no status message.
+         */
+    }
 
+    public void Quit(){
+        /**
+         * The quit command causes the program to silently exit, with no additional output.
+         */
+    }
+
+    public void Verify(){
+        /**
+         * The verify command displays a status message that indicates whether the safe
+         * is valid or not. In order to be valid, none of the rules of the safe may be
+         * violated. Each tile that is not a pillar must have either a laser or beam
+         * covering it. Each pillar that requires a certain number of neighboring lasers
+         * must add up exactly. If two or more lasers are in sight of each other, in the
+         * cardinal directions, it is invalid.
+         */
+    }
+
+    public void Remove(int row, int col){
+        /**
+         * removes laser from given position
+         */
+    }
 
 
 
