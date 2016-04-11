@@ -69,7 +69,8 @@ public class LasersPTUI {
             result += i + "|";
             for (int j = 0; j < cols; j++){
                 if (j == cols - 1){
-                    result += lGrid[i][i] + "\n";
+                    result += lGrid[i][j] + "\n";
+                    continue;
                 }
                 result += lGrid[i][j] + " ";
             }
