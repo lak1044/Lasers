@@ -37,10 +37,15 @@ public class LasersPTUI {
         in.close();
     }
 
+    public static boolean isOccupied(int row, int col){
+        if (lGrid[row][col] == )
+    }
+
     public void Add(int row, int col){
         /**
          * adds laser at given position, raises error if cannot be placed
          */
+
     }
 
     public void Display(){
@@ -54,6 +59,12 @@ public class LasersPTUI {
          * The help command displays the help message to standard output,
          * with no status message.
          */
+        System.out.printf("a|add r c: Add laser to (r,c)\n" +
+                "d|display: Display safe\n" +
+                "h|help: Print this help message\n" +
+                "q|quit: Exit program\n" +
+                "r|remove r c: Remove laser from (r,c)\n" +
+                "v|verify: Verify safe correctness");
     }
 
     public void Quit(){
