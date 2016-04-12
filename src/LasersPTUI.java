@@ -37,28 +37,70 @@ public class LasersPTUI {
         in.close();
     }
 
+    /**
+     * Checks if the given coordinates are occupied (i.e. not empty)
+     */
     public static boolean isOccupied(int row, int col){
-        if (lGrid[row][col] == )
+        if (lGrid[row][col] != EMPTY){
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * Checks if the given coordinates are within the grid
+     */
+    public static boolean validCoordinates(int row, int col){
+        if (! (row < rows)  || !(col < cols)){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * adds laser at given position, raises error if cannot be placed
+     */
     public void Add(int row, int col){
-        /**
-         * adds laser at given position, raises error if cannot be placed
-         */
-
+        if (!validCoordinates(row, col)){
+            System.out.printf("Error adding laser at: (%d, %d)", row, col);
+            return;
+        }
+        else if (isOccupied(row, col)){
+            System.out.printf("Error adding laser at: (%d, %d", row, col);
+            return;
+        }
+        //Set coordinates to a laser
+        lGrid[row][col] = 'L';
+        //Extend beam down
+        for (int i = row + 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i++){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam up
+        for (int i = row - 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i--){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam right
+        for (int j =  col + 1; j < row && !Character.isDigit(lGrid[row][j])  && lGrid[row][col] != ANYPILLAR; j++){
+            lGrid[row][j] = BEAM;
+        }
+        //extend the beam left
+        for (int j = col - 1; j < row && !Character.isDigit(lGrid[j][col])  && lGrid[j][col] != ANYPILLAR; j--){
+            lGrid[row][j] = BEAM;
+        }
     }
 
+    /**
+     * displays current lGrid state with no status message.
+     */
     public void Display(){
-        /**
-         * displays current lGrid state with no status message.
-         */
+        System.out.println(lGrid.toString());
     }
 
+    /**
+     * The help command displays the help message to standard output,
+     * with no status message.
+     */
     public void Help(){
-        /**
-         * The help command displays the help message to standard output,
-         * with no status message.
-         */
         System.out.printf("a|add r c: Add laser to (r,c)\n" +
                 "d|display: Display safe\n" +
                 "h|help: Print this help message\n" +
@@ -67,27 +109,28 @@ public class LasersPTUI {
                 "v|verify: Verify safe correctness");
     }
 
+    /**
+     * The quit command causes the program to silently exit, with no additional output.
+     */
     public void Quit(){
-        /**
-         * The quit command causes the program to silently exit, with no additional output.
-         */
+        System.exit(0);
     }
 
+    /**
+     * The verify command displays a status message that indicates whether the safe
+     * is valid or not. In order to be valid, none of the rules of the safe may be
+     * violated. Each tile that is not a pillar must have either a laser or beam
+     * covering it. Each pillar that requires a certain number of neighboring lasers
+     * must add up exactly. If two or more lasers are in sight of each other, in the
+     * cardinal directions, it is invalid.
+     */
     public void Verify(){
-        /**
-         * The verify command displays a status message that indicates whether the safe
-         * is valid or not. In order to be valid, none of the rules of the safe may be
-         * violated. Each tile that is not a pillar must have either a laser or beam
-         * covering it. Each pillar that requires a certain number of neighboring lasers
-         * must add up exactly. If two or more lasers are in sight of each other, in the
-         * cardinal directions, it is invalid.
-         */
     }
 
+    /**
+     * removes laser from given position
+     */
     public void Remove(int row, int col){
-        /**
-         * removes laser from given position
-         */
     }
 
 
