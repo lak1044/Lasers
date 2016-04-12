@@ -62,6 +62,65 @@ public class LasersPTUI {
          */
     }
 
+    public boolean ValidLazer(int r, int c){
+        boolean isValid=true;
+
+        for (int i=0; i<cols; i++){
+            if (!(i==c)){
+                if (lGrid[r][i] == 'L'){
+                    isValid = false;
+                }
+            }
+        }
+        for (int i=0; i<rows; i++){
+            if (!(i==r)){
+                if (lGrid[i][c]=='L'){
+                    isValid = false;
+                }
+            }
+        }
+
+        return isValid;
+    }
+
+    public boolean ValidPillar(int r, int c){
+        boolean isValid;
+        int toCheck = lGrid[r][c];
+        int checkCount = 0;
+        int top=r-1;
+        int bottom=r+1;
+        int left=c-1;
+        int right=c+1;
+        //check top
+        if (top>=0){
+            if (lGrid[top][c]=='L'){
+                checkCount+=1;
+            }
+        }
+        //check bottom
+        if (bottom<rows){
+            if (lGrid[bottom][c]=='L'){
+                checkCount+=1;
+            }
+        }
+        //check left
+        if (left>=0){
+            if (lGrid[r][left]=='L'){
+                checkCount+=1;
+            }
+        }
+        //check right
+        if (right<cols){
+            if (lGrid[r][right]=='L'){
+                checkCount+=1;
+            }
+        }
+        isValid = toCheck==checkCount;
+        return isValid;
+    }
+
+
+
     public void Verify(){
         /**
          * The verify command displays a status message that indicates whether the safe
@@ -71,6 +130,38 @@ public class LasersPTUI {
          * must add up exactly. If two or more lasers are in sight of each other, in the
          * cardinal directions, it is invalid.
          */
+
+        //check that there are no empty tiles
+        for (int i=0; i< rows; i++){
+            for (int j=0; j<cols; j++){
+                switch (lGrid[i][j]){
+                    case 'L':
+                        if (!ValidLazer(i,j))
+                            System.out.println("Error verifying at: ("+i+", "+j+")");
+                    case '*':
+                    case 'X':
+                    case '0':
+                        if (!ValidPillar(i,j)){
+                            System.out.println("Error verifying at: ("+i+", "+j+")");
+                        }
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                        if (!ValidPillar(i,j)){
+                            System.out.println("Error verifying at: ("+i+", "+j+")");
+                        }
+                    case '.':
+                        //case were the tile is not filled
+                        System.out.println("Error verifying at: ("+i+", "+j+")");
+
+                }
+            }
+        }
+
+
+
+
     }
 
     public void Remove(int row, int col){
