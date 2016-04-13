@@ -41,21 +41,6 @@ public class LaserModel {
     }
 
     /**
-     * Checks if the given coordinates are occupied (i.e. not empty)
-     */
-
-    public static boolean isOccupied(int row, int col) {
-        return (lGrid[row][col] != EMPTY && lGrid[row][col] != BEAM);
-    }
-
-    /**
-     * Checks if the given coordinates are within the grid
-     */
-    public static boolean validCoordinates(int row, int col) {
-        return ((row >= 0) && (row < rows) && (col >= 0) && (col < cols));
-    }
-
-    /**
      * adds laser at given position, raises error if cannot be placed
      */
     public static void Add(int row, int col) {
@@ -70,52 +55,6 @@ public class LaserModel {
         lGrid[row][col] = LASER;
         laserList.add(new Laser(row, col));
         AddBeams(row, col);
-    }
-
-    public static boolean ValidLaser(int r, int c){
-        for (Laser l: laserList){
-            if (l.row == r && l.col == c){
-                return l.isValid;
-            }
-        }
-        return true; //Shouldn't get here, just to satisfy intellij
-    }
-
-    public static boolean ValidPillar(int r, int c){
-        boolean isValid;
-        String checkStr = lGrid[r][c]+"";
-        int toCheck = Integer.parseInt(checkStr);
-        int checkCount = 0;
-        int top=r-1;
-        int bottom=r+1;
-        int left=c-1;
-        int right=c+1;
-        //check top
-        if (top>=0){
-            if (lGrid[top][c]== LASER){
-                checkCount+=1;
-            }
-        }
-        //check bottom
-        if (bottom<rows){
-            if (lGrid[bottom][c]==LASER){
-                checkCount+=1;
-            }
-        }
-        //check left
-        if (left>=0){
-            if (lGrid[r][left]==LASER){
-                checkCount+=1;
-            }
-        }
-        //check right
-        if (right<cols){
-            if (lGrid[r][right]==LASER){
-                checkCount+=1;
-            }
-        }
-        isValid = toCheck==checkCount;
-        return isValid;
     }
 
 
@@ -165,6 +104,50 @@ public class LaserModel {
             }
         }
         System.out.println("Safe is fully verified!");
+    }
+
+    /**
+     * removes laser from given position
+     */
+    public static void Remove(int row, int col){
+        if (!validCoordinates(row, col)){
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        else if (lGrid[row][col] != LASER){
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        //Set coordinates to empty
+        lGrid[row][col] = EMPTY;
+        RemoveBeams(row, col);
+        int toRemove = -1;
+        for (Laser l: laserList){
+            if (l.row == row && l.col == col){
+                toRemove = laserList.indexOf(l);
+                continue;
+            }
+            l.isValid = true;
+            AddBeams(l.row, l.col);
+        }
+        if (toRemove != -1){
+            laserList.remove(toRemove);
+        }
+    }
+
+    //Helper Functions
+    /**
+     * Checks if the given coordinates are occupied (i.e. not empty)
+     */
+    public static boolean isOccupied(int row, int col) {
+        return (lGrid[row][col] != EMPTY && lGrid[row][col] != BEAM);
+    }
+
+    /**
+     * Checks if the given coordinates are within the grid
+     */
+    public static boolean validCoordinates(int row, int col) {
+        return ((row >= 0) && (row < rows) && (col >= 0) && (col < cols));
     }
 
     /**
@@ -277,35 +260,53 @@ public class LaserModel {
         }
     }
 
-    /**
-     * removes laser from given position
-     */
-    public static void Remove(int row, int col){
-        if (!validCoordinates(row, col)){
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
-            return;
-        }
-        else if (lGrid[row][col] != LASER){
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
-            return;
-        }
-        //Set coordinates to empty
-        lGrid[row][col] = EMPTY;
-        RemoveBeams(row, col);
-        int toRemove = -1;
+    public static boolean ValidLaser(int r, int c){
         for (Laser l: laserList){
-            if (l.row == row && l.col == col){
-                toRemove = laserList.indexOf(l);
-                continue;
+            if (l.row == r && l.col == c){
+                return l.isValid;
             }
-            l.isValid = true;
-            AddBeams(l.row, l.col);
         }
-        if (toRemove != -1){
-            laserList.remove(toRemove);
-        }
+        return true; //Shouldn't get here, just to satisfy intellij
     }
 
+    public static boolean ValidPillar(int r, int c){
+        boolean isValid;
+        String checkStr = lGrid[r][c]+"";
+        int toCheck = Integer.parseInt(checkStr);
+        int checkCount = 0;
+        int top=r-1;
+        int bottom=r+1;
+        int left=c-1;
+        int right=c+1;
+        //check top
+        if (top>=0){
+            if (lGrid[top][c]== LASER){
+                checkCount+=1;
+            }
+        }
+        //check bottom
+        if (bottom<rows){
+            if (lGrid[bottom][c]==LASER){
+                checkCount+=1;
+            }
+        }
+        //check left
+        if (left>=0){
+            if (lGrid[r][left]==LASER){
+                checkCount+=1;
+            }
+        }
+        //check right
+        if (right<cols){
+            if (lGrid[r][right]==LASER){
+                checkCount+=1;
+            }
+        }
+        isValid = toCheck==checkCount;
+        return isValid;
+    }
+
+    //Overrides
     @Override
     public String toString(){
         String result = "  ";

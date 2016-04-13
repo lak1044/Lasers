@@ -8,23 +8,6 @@ import java.util.Scanner;
  */
 public class LasersPTUI {
 
-    //Empty cell
-    public static final char EMPTY = '.';
-    //Laser
-    public static final char LASER = 'L';
-    //Beam
-    public static final char BEAM = '*';
-    //Pillar w/any num of lasers
-    public static final char ANYPILLAR = 'X';
-    //Horizontal dim
-    private static int rows;
-    //Vertical dim
-    private static int cols;
-    //Grid
-    private static char[][] lGrid;
-    //List of lasers
-    private static ArrayList<Laser> laserList;
-
     /**
      * The help command displays the help message to standard output,
      * with no status message.
