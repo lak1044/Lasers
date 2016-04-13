@@ -302,7 +302,7 @@ public class LasersPTUI {
         if (args.length==1) {
             System.out.println(lasers.toString());
             while (true){
-                System.out.println("> ");
+                System.out.printf("> ");
                 String s = sc.nextLine();
                 if (s.charAt(0)=='h'){
                     Help();
