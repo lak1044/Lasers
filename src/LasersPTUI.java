@@ -98,7 +98,7 @@ public class LasersPTUI {
         System.exit(0);
     }
 
-    public static boolean ValidLazer(int r, int c){
+    public static boolean ValidLaser(int r, int c){
         boolean isValid=true;
 
         for (int i=0; i<cols; i++){
@@ -156,7 +156,6 @@ public class LasersPTUI {
     }
 
 
-
     public static void Verify(){
         /**
          * The verify command displays a status message that indicates whether the safe
@@ -172,7 +171,7 @@ public class LasersPTUI {
             for (int j=0; j<cols; j++){
                 switch (lGrid[i][j]){
                     case 'L':
-                        if (!ValidLazer(i,j))
+                        if (!ValidLaser(i,j))
                             System.out.println("Error verifying at: ("+i+", "+j+")");
                             return;
                     case '*':
@@ -198,10 +197,6 @@ public class LasersPTUI {
                 }
             }
         }
-
-
-
-
     }
 
     /**
