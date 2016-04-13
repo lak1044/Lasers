@@ -11,6 +11,7 @@ public class Laser {
         this.row = row;
         this.col = col;
     }
+
     //TODO finish laser class to make it easier to deal with
 
 

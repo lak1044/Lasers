@@ -129,25 +129,25 @@ public class LasersPTUI {
         int right=c+1;
         //check top
         if (top>=0){
-            if (lGrid[top][c]=='L'){
+            if (lGrid[top][c]== LASER){
                 checkCount+=1;
             }
         }
         //check bottom
         if (bottom<rows){
-            if (lGrid[bottom][c]=='L'){
+            if (lGrid[bottom][c]==LASER){
                 checkCount+=1;
             }
         }
         //check left
         if (left>=0){
-            if (lGrid[r][left]=='L'){
+            if (lGrid[r][left]==LASER){
                 checkCount+=1;
             }
         }
         //check right
         if (right<cols){
-            if (lGrid[r][right]=='L'){
+            if (lGrid[r][right]==LASER){
                 checkCount+=1;
             }
         }
@@ -232,6 +232,12 @@ public class LasersPTUI {
             lGrid[row][j] = BEAM;
         }
     }
+
+    /**
+     * Remove beams from a given laser position
+     * @param row
+     * @param col
+     */
     public static void RemoveBeams(int row, int col){
         //Remove beam down
         for (int i = row + 1; i < row &&
