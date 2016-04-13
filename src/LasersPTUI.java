@@ -212,29 +212,69 @@ public class LasersPTUI {
         //Extend beam down
         for (int i = row + 1; i < row &&
                 !Character.isDigit(lGrid[i][col]) &&
-                lGrid[i][col] != ANYPILLAR &&
-                lGrid[i][col] != LASER; i++){
+                lGrid[i][col] != ANYPILLAR; i++){
+            if (lGrid[i][col] == LASER){
+                for (Laser l: laserList){
+                    if (l.row == i && l.col == col){
+                        l.isValid = false;
+                    }
+                    else if (l.row == row && l.col == col){
+                        l.isValid = false;
+                    }
+                }
+                break;
+            }
             lGrid[i][col] = BEAM;
         }
         //Extend the beam up
         for (int i = row - 1; i < row &&
                 !Character.isDigit(lGrid[i][col]) &&
-                lGrid[i][col] != ANYPILLAR &&
-                lGrid[i][col] != LASER; i--){
+                lGrid[i][col] != ANYPILLAR; i--){
+            if (lGrid[i][col] == LASER){
+                for (Laser l: laserList){
+                    if (l.row == i && l.col == col){
+                        l.isValid = false;
+                    }
+                    else if (l.row == row && l.col == col){
+                        l.isValid = false;
+                    }
+                }
+                break;
+            }
             lGrid[i][col] = BEAM;
         }
         //Extend the beam right
         for (int j =  col + 1; j < row &&
                 !Character.isDigit(lGrid[row][j]) &&
-                lGrid[row][j] != ANYPILLAR &&
-                lGrid[row][j] != LASER; j++){
+                lGrid[row][j] != ANYPILLAR; j++){
+            if (lGrid[row][j] == LASER){
+                for (Laser l: laserList){
+                    if (l.row == row && l.col == j){
+                        l.isValid = false;
+                    }
+                    else if (l.row == row && l.col == col){
+                        l.isValid = false;
+                    }
+                }
+                break;
+            }
             lGrid[row][j] = BEAM;
         }
         //extend the beam left
         for (int j = col - 1; j < row &&
                 !Character.isDigit(lGrid[row][j]) &&
-                lGrid[row][j] != ANYPILLAR &&
-                lGrid[row][j] != LASER; j--){
+                lGrid[row][j] != ANYPILLAR; j--){
+            if (lGrid[row][j] == LASER){
+                for (Laser l: laserList){
+                    if (l.row == row && l.col == j){
+                        l.isValid = false;
+                    }
+                    else if (l.row == row && l.col == col){
+                        l.isValid = false;
+                    }
+                }
+                break;
+            }
             lGrid[row][j] = BEAM;
         }
     }
@@ -308,7 +348,7 @@ public class LasersPTUI {
         if (args.length==1) {
             System.out.println(lasers.toString());
             while (true){
-                System.out.println("> ");
+                System.out.printf("> ");
                 String s = sc.nextLine();
                 if (s.charAt(0)=='h'){
                     Help();
