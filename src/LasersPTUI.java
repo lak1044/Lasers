@@ -45,7 +45,7 @@ public class LasersPTUI {
      * Checks if the given coordinates are occupied (i.e. not empty)
      */
     public static boolean isOccupied(int row, int col){
-        return (lGrid[row][col] != EMPTY);
+        return (lGrid[row][col] != EMPTY && lGrid[row][col] != BEAM);
     }
 
     /**
