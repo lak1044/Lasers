@@ -332,12 +332,17 @@ public class LasersPTUI {
         //Set coordinates to empty
         lGrid[row][col] = EMPTY;
         RemoveBeams(row, col);
-        for (int i = 0; i < laserList.size(); i++){
-            if (laserList.get(i).row == row && laserList.get(i).col == col){
-                laserList.remove(laserList.get(i));
+        int toRemove = -1;
+        for (Laser l: laserList){
+            if (l.row == row && l.col == col){
+                toRemove = laserList.indexOf(l);
+                continue;
             }
-            laserList.get(i).isValid = true;
-            AddBeams(laserList.get(i).row, laserList.get(i).col);
+            l.isValid = true;
+            AddBeams(l.row, l.col);
+        }
+        if (toRemove != -1){
+            laserList.remove(toRemove);
         }
     }
 
