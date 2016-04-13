@@ -121,7 +121,8 @@ public class LasersPTUI {
 
     public static boolean ValidPillar(int r, int c){
         boolean isValid;
-        int toCheck = lGrid[r][c];
+        String checkStr = lGrid[r][c]+"";
+        int toCheck = Integer.parseInt(checkStr);
         int checkCount = 0;
         int top=r-1;
         int bottom=r+1;
@@ -171,16 +172,19 @@ public class LasersPTUI {
             for (int j=0; j<cols; j++){
                 switch (lGrid[i][j]){
                     case 'L':
-                        if (!ValidLaser(i,j))
-                            System.out.println("Error verifying at: ("+i+", "+j+")");
-                            return;
-                    case '*':
-                    case 'X':
-                    case '0':
-                        if (!ValidPillar(i,j)){
-                            System.out.println("Error verifying at: ("+i+", "+j+")");
+                        if (!ValidLaser(i,j)) {
+                            System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
+                        break;
+                    case '*':
+                    case 'X':
+                        break;
+                    case '0':
+                        //if (!ValidPillar(i,j)){
+                        //    System.out.println("Error verifying at: ("+i+", "+j+")");
+                        //    return;
+                        //}
                     case '1':
                     case '2':
                     case '3':
@@ -189,6 +193,7 @@ public class LasersPTUI {
                             System.out.println("Error verifying at: ("+i+", "+j+")");
                             return;
                         }
+                        break;
                     case '.':
                         //case were the tile is not filled
                         System.out.println("Error verifying at: ("+i+", "+j+")");
@@ -197,6 +202,7 @@ public class LasersPTUI {
                 }
             }
         }
+        System.out.println("Safe is fully verified!");
     }
 
     /**
