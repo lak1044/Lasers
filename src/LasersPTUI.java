@@ -31,6 +31,7 @@ public class LasersPTUI {
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
         //Filling the grid
+        laserList = new ArrayList<>();
         lGrid = new char[rows][cols];
         for (int i = 0; i < rows; i++){
             for (int j = 0; j < cols; j++){
@@ -68,6 +69,7 @@ public class LasersPTUI {
         }
         //Set coordinates to a laser
         lGrid[row][col] = LASER;
+        laserList.add(new Laser(row, col));
         AddBeams(row, col);
     }
 
@@ -204,7 +206,7 @@ public class LasersPTUI {
      */
     public static void AddBeams(int row, int col){
         //Extend beam down
-        for (int i = row + 1; i < row &&
+        for (int i = row + 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i++){
             if (lGrid[i][col] == LASER){
@@ -221,7 +223,7 @@ public class LasersPTUI {
             lGrid[i][col] = BEAM;
         }
         //Extend the beam up
-        for (int i = row - 1; i < row &&
+        for (int i = row - 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i--){
             if (lGrid[i][col] == LASER){
@@ -238,7 +240,7 @@ public class LasersPTUI {
             lGrid[i][col] = BEAM;
         }
         //Extend the beam right
-        for (int j =  col + 1; j < row &&
+        for (int j =  col + 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j++){
             if (lGrid[row][j] == LASER){
@@ -255,7 +257,7 @@ public class LasersPTUI {
             lGrid[row][j] = BEAM;
         }
         //extend the beam left
-        for (int j = col - 1; j < row &&
+        for (int j = col - 1; validCoordinates(row, j)&&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j--){
             if (lGrid[row][j] == LASER){
@@ -280,28 +282,28 @@ public class LasersPTUI {
      */
     public static void RemoveBeams(int row, int col){
         //Remove beam down
-        for (int i = row + 1; i < row &&
+        for (int i = row + 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR &&
                 lGrid[i][col] != LASER; i++){
             lGrid[i][col] = EMPTY;
         }
         //Remove the beam up
-        for (int i = row - 1; i < row &&
+        for (int i = row - 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col])
                 && lGrid[i][col] != ANYPILLAR &&
                 lGrid[i][col] != LASER; i--){
             lGrid[i][col] = EMPTY;
         }
         //Remove the beam right
-        for (int j =  col + 1; j < row &&
+        for (int j =  col + 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR &&
                 lGrid[row][j] != LASER; j++){
             lGrid[row][j] = EMPTY;
         }
         //Remove the beam left
-        for (int j = col - 1; j < row &&
+        for (int j = col - 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR &&
                 lGrid[row][j] != LASER; j--){
@@ -324,17 +326,14 @@ public class LasersPTUI {
         //Set coordinates to empty
         lGrid[row][col] = EMPTY;
         RemoveBeams(row, col);
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < cols; j++){
-                if (lGrid[i][j] == LASER){
-                    AddBeams(i, j);
-                }
+        for (Laser l: laserList){
+            if (l.row == row && l.col == col){
+                laserList.remove(l);
             }
+            l.isValid = true;
+            AddBeams(l.row, l.col);
         }
     }
-
-
-
 
     public static void main(String[] args) throws FileNotFoundException {
         LasersPTUI lasers = new LasersPTUI(args[0]);
