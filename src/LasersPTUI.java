@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -21,6 +22,8 @@ public class LasersPTUI {
     private static int cols;
     //Grid
     private static char[][] lGrid;
+    //List of lasers
+    private static ArrayList<Laser> laserList;
 
 
     public LasersPTUI(String fileName) throws FileNotFoundException {
@@ -65,22 +68,7 @@ public class LasersPTUI {
         }
         //Set coordinates to a laser
         lGrid[row][col] = LASER;
-        //Extend beam down
-        for (int i = row + 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i++){
-            lGrid[i][col] = BEAM;
-        }
-        //Extend the beam up
-        for (int i = row - 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i--){
-            lGrid[i][col] = BEAM;
-        }
-        //Extend the beam right
-        for (int j =  col + 1; j < row && !Character.isDigit(lGrid[row][j])  && lGrid[row][col] != ANYPILLAR; j++){
-            lGrid[row][j] = BEAM;
-        }
-        //extend the beam left
-        for (int j = col - 1; j < row && !Character.isDigit(lGrid[j][col])  && lGrid[j][col] != ANYPILLAR; j--){
-            lGrid[row][j] = BEAM;
-        }
+        AddBeams(row, col);
     }
 
     /**
@@ -122,6 +110,70 @@ public class LasersPTUI {
     }
 
     /**
+     * Extends beams from given laser coordinate
+     */
+    public static void AddBeams(int row, int col){
+        //Extend beam down
+        for (int i = row + 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i++){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam up
+        for (int i = row - 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i--){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam right
+        for (int j =  col + 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j++){
+            lGrid[row][j] = BEAM;
+        }
+        //extend the beam left
+        for (int j = col - 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j--){
+            lGrid[row][j] = BEAM;
+        }
+    }
+    public static void RemoveBeams(int row, int col){
+        //Remove beam down
+        for (int i = row + 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i++){
+            lGrid[i][col] = EMPTY;
+        }
+        //Remove the beam up
+        for (int i = row - 1; i < row &&
+                !Character.isDigit(lGrid[i][col])
+                && lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i--){
+            lGrid[i][col] = EMPTY;
+        }
+        //Remove the beam right
+        for (int j =  col + 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j++){
+            lGrid[row][j] = EMPTY;
+        }
+        //Remove the beam left
+        for (int j = col - 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j--){
+            lGrid[row][j] = EMPTY;
+        }
+    }
+
+    /**
      * removes laser from given position
      */
     public void Remove(int row, int col){
@@ -135,21 +187,13 @@ public class LasersPTUI {
         }
         //Set coordinates to empty
         lGrid[row][col] = EMPTY;
-        //Remove beam down
-        for (int i = row + 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i++){
-            lGrid[i][col] = EMPTY;
-        }
-        //Remove the beam up
-        for (int i = row - 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i--){
-            lGrid[i][col] = EMPTY;
-        }
-        //Remove the beam right
-        for (int j =  col + 1; j < row && !Character.isDigit(lGrid[row][j])  && lGrid[row][col] != ANYPILLAR; j++){
-            lGrid[row][j] = EMPTY;
-        }
-        //Remove the beam left
-        for (int j = col - 1; j < row && !Character.isDigit(lGrid[j][col])  && lGrid[j][col] != ANYPILLAR; j--){
-            lGrid[row][j] = EMPTY;
+        RemoveBeams(row, col);
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                if (lGrid[i][j] == LASER){
+                    AddBeams(i, j);
+                }
+            }
         }
     }
 
