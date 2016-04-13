@@ -216,6 +216,7 @@ public class LasersPTUI {
                         l.isValid = false;
                     }
                 }
+                break;
             }
             lGrid[i][col] = BEAM;
         }
@@ -232,6 +233,7 @@ public class LasersPTUI {
                         l.isValid = false;
                     }
                 }
+                break;
             }
             lGrid[i][col] = BEAM;
         }
@@ -248,6 +250,7 @@ public class LasersPTUI {
                         l.isValid = false;
                     }
                 }
+                break;
             }
             lGrid[row][j] = BEAM;
         }
@@ -264,6 +267,7 @@ public class LasersPTUI {
                         l.isValid = false;
                     }
                 }
+                break;
             }
             lGrid[row][j] = BEAM;
         }
