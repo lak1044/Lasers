@@ -57,7 +57,7 @@ public class LasersPTUI {
     /**
      * adds laser at given position, raises error if cannot be placed
      */
-    public void Add(int row, int col){
+    public static void Add(int row, int col){
         if (!validCoordinates(row, col)){
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
@@ -82,7 +82,7 @@ public class LasersPTUI {
      * The help command displays the help message to standard output,
      * with no status message.
      */
-    public void Help(){
+    public static void Help(){
         System.out.printf("a|add r c: Add laser to (r,c)\n" +
                 "d|display: Display safe\n" +
                 "h|help: Print this help message\n" +
@@ -293,7 +293,23 @@ public class LasersPTUI {
 
     public static void main(String[] args) throws FileNotFoundException {
         LasersPTUI lasers = new LasersPTUI(args[0]);
-        System.out.println(lasers.toString());
+        Scanner sc = new Scanner(System.in);
+        if (args.length==1) {
+            System.out.println(lasers.toString());
+            while (true){
+                System.out.println("> ");
+                String s = sc.nextLine();
+                if (s.equals("help")){
+                    Help();
+                }
+                else if (s.charAt(0) == 'a'){
+                    String[] add=s.split(" ");
+                    Add(Integer.parseInt(add[1]),Integer.parseInt(add[2]));
+
+                }
+
+            }
+        }
     }
 
     @Override
