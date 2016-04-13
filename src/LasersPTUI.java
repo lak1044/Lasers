@@ -74,7 +74,7 @@ public class LasersPTUI {
     /**
      * displays current lGrid state with no status message.
      */
-    public void Display(){
+    public static void Display(){
         System.out.println(lGrid.toString());
     }
 
@@ -94,11 +94,11 @@ public class LasersPTUI {
     /**
      * The quit command causes the program to silently exit, with no additional output.
      */
-    public void Quit(){
+    public static void Quit(){
         System.exit(0);
     }
 
-    public boolean ValidLazer(int r, int c){
+    public static boolean ValidLazer(int r, int c){
         boolean isValid=true;
 
         for (int i=0; i<cols; i++){
@@ -119,7 +119,7 @@ public class LasersPTUI {
         return isValid;
     }
 
-    public boolean ValidPillar(int r, int c){
+    public static boolean ValidPillar(int r, int c){
         boolean isValid;
         int toCheck = lGrid[r][c];
         int checkCount = 0;
@@ -157,7 +157,7 @@ public class LasersPTUI {
 
 
 
-    public void Verify(){
+    public static void Verify(){
         /**
          * The verify command displays a status message that indicates whether the safe
          * is valid or not. In order to be valid, none of the rules of the safe may be
@@ -174,11 +174,13 @@ public class LasersPTUI {
                     case 'L':
                         if (!ValidLazer(i,j))
                             System.out.println("Error verifying at: ("+i+", "+j+")");
+                            return;
                     case '*':
                     case 'X':
                     case '0':
                         if (!ValidPillar(i,j)){
                             System.out.println("Error verifying at: ("+i+", "+j+")");
+                            return;
                         }
                     case '1':
                     case '2':
@@ -186,10 +188,12 @@ public class LasersPTUI {
                     case '4':
                         if (!ValidPillar(i,j)){
                             System.out.println("Error verifying at: ("+i+", "+j+")");
+                            return;
                         }
                     case '.':
                         //case were the tile is not filled
                         System.out.println("Error verifying at: ("+i+", "+j+")");
+                        return;
 
                 }
             }
@@ -267,7 +271,7 @@ public class LasersPTUI {
     /**
      * removes laser from given position
      */
-    public void Remove(int row, int col){
+    public static void Remove(int row, int col){
         if (!validCoordinates(row, col)){
             System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
             return;
@@ -299,13 +303,25 @@ public class LasersPTUI {
             while (true){
                 System.out.println("> ");
                 String s = sc.nextLine();
-                if (s.equals("help")){
+                if (s.charAt(0)=='h'){
                     Help();
                 }
                 else if (s.charAt(0) == 'a'){
                     String[] add=s.split(" ");
                     Add(Integer.parseInt(add[1]),Integer.parseInt(add[2]));
-
+                }
+                else if (s.charAt(0)=='r'){
+                    String[] remove = s.split(" ");
+                    Remove(Integer.parseInt(remove[1]), Integer.parseInt(remove[2]));
+                }
+                else if (s.charAt(0)=='d'){
+                    Display();
+                }
+                else if (s.charAt(0)=='v'){
+                    Verify();
+                }
+                else if (s.charAt(0)=='q'){
+                    Quit();
                 }
 
             }
