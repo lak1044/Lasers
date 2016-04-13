@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -21,6 +22,8 @@ public class LasersPTUI {
     private static int cols;
     //Grid
     private static char[][] lGrid;
+    //List of lasers
+    private static ArrayList<Laser> laserList;
 
 
     public LasersPTUI(String fileName) throws FileNotFoundException {
@@ -41,20 +44,14 @@ public class LasersPTUI {
      * Checks if the given coordinates are occupied (i.e. not empty)
      */
     public static boolean isOccupied(int row, int col){
-        if (lGrid[row][col] != EMPTY){
-            return false;
-        }
-        return true;
+        return (lGrid[row][col] != EMPTY);
     }
 
     /**
      * Checks if the given coordinates are within the grid
      */
     public static boolean validCoordinates(int row, int col){
-        if (! (row < rows)  || !(col < cols)){
-            return false;
-        }
-        return true;
+        return ((row >= 0) && (row < rows)  && (col >= 0) && (col < cols));
     }
 
     /**
@@ -62,31 +59,16 @@ public class LasersPTUI {
      */
     public void Add(int row, int col){
         if (!validCoordinates(row, col)){
-            System.out.printf("Error adding laser at: (%d, %d)", row, col);
+            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
         }
         else if (isOccupied(row, col)){
-            System.out.printf("Error adding laser at: (%d, %d", row, col);
+            System.out.printf("Error adding laser at: (%d, %d\n", row, col);
             return;
         }
         //Set coordinates to a laser
-        lGrid[row][col] = 'L';
-        //Extend beam down
-        for (int i = row + 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i++){
-            lGrid[i][col] = BEAM;
-        }
-        //Extend the beam up
-        for (int i = row - 1; i < row && !Character.isDigit(lGrid[i][col])  && lGrid[i][col] != ANYPILLAR; i--){
-            lGrid[i][col] = BEAM;
-        }
-        //Extend the beam right
-        for (int j =  col + 1; j < row && !Character.isDigit(lGrid[row][j])  && lGrid[row][col] != ANYPILLAR; j++){
-            lGrid[row][j] = BEAM;
-        }
-        //extend the beam left
-        for (int j = col - 1; j < row && !Character.isDigit(lGrid[j][col])  && lGrid[j][col] != ANYPILLAR; j--){
-            lGrid[row][j] = BEAM;
-        }
+        lGrid[row][col] = LASER;
+        AddBeams(row, col);
     }
 
     /**
@@ -106,7 +88,7 @@ public class LasersPTUI {
                 "h|help: Print this help message\n" +
                 "q|quit: Exit program\n" +
                 "r|remove r c: Remove laser from (r,c)\n" +
-                "v|verify: Verify safe correctness");
+                "v|verify: Verify safe correctness\n");
     }
 
     /**
@@ -219,9 +201,91 @@ public class LasersPTUI {
     }
 
     /**
+     * Extends beams from given laser coordinate
+     */
+    public static void AddBeams(int row, int col){
+        //Extend beam down
+        for (int i = row + 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i++){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam up
+        for (int i = row - 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i--){
+            lGrid[i][col] = BEAM;
+        }
+        //Extend the beam right
+        for (int j =  col + 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j++){
+            lGrid[row][j] = BEAM;
+        }
+        //extend the beam left
+        for (int j = col - 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j--){
+            lGrid[row][j] = BEAM;
+        }
+    }
+    public static void RemoveBeams(int row, int col){
+        //Remove beam down
+        for (int i = row + 1; i < row &&
+                !Character.isDigit(lGrid[i][col]) &&
+                lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i++){
+            lGrid[i][col] = EMPTY;
+        }
+        //Remove the beam up
+        for (int i = row - 1; i < row &&
+                !Character.isDigit(lGrid[i][col])
+                && lGrid[i][col] != ANYPILLAR &&
+                lGrid[i][col] != LASER; i--){
+            lGrid[i][col] = EMPTY;
+        }
+        //Remove the beam right
+        for (int j =  col + 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j++){
+            lGrid[row][j] = EMPTY;
+        }
+        //Remove the beam left
+        for (int j = col - 1; j < row &&
+                !Character.isDigit(lGrid[row][j]) &&
+                lGrid[row][j] != ANYPILLAR &&
+                lGrid[row][j] != LASER; j--){
+            lGrid[row][j] = EMPTY;
+        }
+    }
+
+    /**
      * removes laser from given position
      */
     public void Remove(int row, int col){
+        if (!validCoordinates(row, col)){
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        else if (lGrid[row][col] != LASER){
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        //Set coordinates to empty
+        lGrid[row][col] = EMPTY;
+        RemoveBeams(row, col);
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                if (lGrid[i][j] == LASER){
+                    AddBeams(i, j);
+                }
+            }
+        }
     }
 
 
