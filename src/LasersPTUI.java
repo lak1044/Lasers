@@ -101,24 +101,12 @@ public class LasersPTUI {
     }
 
     public static boolean ValidLaser(int r, int c){
-        boolean isValid=true;
-
-        for (int i=0; i<cols; i++){
-            if (!(i==c)){
-                if (lGrid[r][i] == 'L'){
-                    isValid = false;
-                }
+        for (Laser l: laserList){
+            if (l.row == r && l.col == c){
+                return l.isValid;
             }
         }
-        for (int i=0; i<rows; i++){
-            if (!(i==r)){
-                if (lGrid[i][c]=='L'){
-                    isValid = false;
-                }
-            }
-        }
-
-        return isValid;
+        return true; //Shouldn't get here, just to satisfy intellij
     }
 
     public static boolean ValidPillar(int r, int c){
