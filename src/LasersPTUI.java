@@ -74,8 +74,8 @@ public class LasersPTUI {
     /**
      * displays current lGrid state with no status message.
      */
-    public static void Display(){
-        System.out.println(lGrid.toString());
+    public static void Display(LasersPTUI lasers){
+        System.out.println(lasers.toString());
     }
 
     /**
@@ -315,7 +315,7 @@ public class LasersPTUI {
                     Remove(Integer.parseInt(remove[1]), Integer.parseInt(remove[2]));
                 }
                 else if (s.charAt(0)=='d'){
-                    Display();
+                    Display(lasers);
                 }
                 else if (s.charAt(0)=='v'){
                     Verify();
