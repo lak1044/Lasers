@@ -69,6 +69,10 @@ public class LasersPTUI {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
+        if (args.length == 0){
+            System.out.println("Usage: java LasersPTUI safe-file [input]");
+            System.exit(0);
+        }
         LaserModel lasers = new LaserModel(args[0]);
         if (args.length == 2){
             fileCommands(args[1], lasers);
