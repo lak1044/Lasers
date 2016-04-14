@@ -10,6 +10,7 @@ public class Laser {
     public Laser(int row, int col){
         this.row = row;
         this.col = col;
+        this.isValid = true;
     }
 
 
