@@ -39,17 +39,17 @@ public class LasersPTUI {
                 }
                 else if (s.charAt(0) == 'a'){
                     String[] add=s.split(" ");
-                    LaserModel.Add(Integer.parseInt(add[1]),Integer.parseInt(add[2]));
+                    lasers.Add(Integer.parseInt(add[1]),Integer.parseInt(add[2]));
                 }
                 else if (s.charAt(0)=='r'){
                     String[] remove = s.split(" ");
-                    LaserModel.Remove(Integer.parseInt(remove[1]), Integer.parseInt(remove[2]));
+                    lasers.Remove(Integer.parseInt(remove[1]), Integer.parseInt(remove[2]));
                 }
                 else if (s.charAt(0)=='d'){
                     System.out.println(lasers);
                 }
                 else if (s.charAt(0)=='v'){
-                    LaserModel.Verify();
+                    lasers.Verify();
                 }
                 else if (s.charAt(0)=='q'){
                     Quit();

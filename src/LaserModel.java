@@ -24,20 +24,30 @@ public class LaserModel {
     private static int cols;
     //Grid
     private static char[][] lGrid;
-    //Hash map of lasers. The key is a string made of the coordinates of said laser
+    //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
     //Key is (Integer.toString(row) + Integer.toString(col))
     private static HashMap<String, Laser> laserHash;
+    //Hash map of pillar locations. Key is location and value is num of required lasers
+    //Key is same as laser hash map
+    private static HashMap<String, Integer> pillarHash;
 
     public LaserModel(String fileName) throws FileNotFoundException {
         Scanner in = new Scanner(new File(fileName));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
         laserHash = new HashMap<>();
+        pillarHash = new HashMap<>();
         //Filling the grid
         lGrid = new char[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 lGrid[i][j] = in.next().charAt(0);
+                if (Character.isDigit(lGrid[i][j])){
+                    pillarHash.put(Integer.toString(i) + Integer.toString(j), Character.getNumericValue(lGrid[i][j]));
+                }
+                else if (lGrid[i][j] == ANYPILLAR){
+                    pillarHash.put(Integer.toString(i) + Integer.toString(j), -1);
+                }
             }
         }
         in.close();
@@ -57,20 +67,17 @@ public class LaserModel {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 switch (lGrid[i][j]) {
-                    case 'L':
+                    //Doesn't need to worry about beams or X-based pillars
+                    case BEAM:
+                    case ANYPILLAR:
+                        break;
+                    case LASER:
                         if (!ValidLaser(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
                         break;
-                    case '*':
-                    case 'X':
-                        break;
                     case '0':
-                        //if (!ValidPillar(i,j)){
-                        //    System.out.println("Error verifying at: ("+i+", "+j+")");
-                        //    return;
-                        //}
                     case '1':
                     case '2':
                     case '3':
@@ -80,8 +87,8 @@ public class LaserModel {
                             return;
                         }
                         break;
-                    case '.':
-                        //case were the tile is not filled
+                    //Must be empty if failed all other cases
+                    default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
                         return;
 
@@ -244,9 +251,11 @@ public class LaserModel {
      * Returns whether or not a pillar is valid
      */
     public boolean ValidPillar(int r, int c) {
+        if (pillarHash.get(Integer.toString(r) + Integer.toString(c)) == ANYPILLAR){
+            return true;
+        }
         boolean isValid;
-        String checkStr = lGrid[r][c] + "";
-        int toCheck = Integer.parseInt(checkStr);
+        int toCheck = pillarHash.get(Integer.toString(r) + Integer.toString(c));
         int checkCount = 0;
         int top = r - 1;
         int bottom = r + 1;
