@@ -82,6 +82,7 @@ public class LasersPTUI {
         }
 
         Scanner sc = new Scanner(System.in);
+        System.out.println(lasers.toString());
         while (true){
             System.out.printf("> ");
             String command = sc.nextLine();
