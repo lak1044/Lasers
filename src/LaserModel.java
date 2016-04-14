@@ -307,10 +307,10 @@ public class LaserModel {
         for (int i = 0; i < rows; i++) {
             result += i % 10 + "|";
             for (int j = 0; j < cols; j++) {
-                if (j == cols - 1) {
-                    result += lGrid[i][j] + "\n";
-                    continue;
-                }
+                //if (j == cols - 1) {
+                    //result += lGrid[i][j];
+                  //  continue;
+                //}
                 result += lGrid[i][j] + " ";
             }
         }
