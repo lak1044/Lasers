@@ -73,6 +73,7 @@ public class LaserModel {
                     case LASER:
                         if (!ValidLaser(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                            System.out.println(lGrid);
                             return;
                         }
                         break;
@@ -83,18 +84,21 @@ public class LaserModel {
                     case '4':
                         if (!ValidPillar(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                            System.out.println(lGrid);
                             return;
                         }
                         break;
                     //Must be empty if failed all other cases
                     default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                        System.out.println(lGrid);
                         return;
 
                 }
             }
         }
         System.out.println("Safe is fully verified!");
+        System.out.println(lGrid);
     }
 
     /**
@@ -103,9 +107,11 @@ public class LaserModel {
     public void Add(int row, int col) {
         if (!validCoordinates(row, col)) {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            System.out.println(lGrid);
             return;
         } else if (isOccupied(row, col)) {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            System.out.println(lGrid);
             return;
         }
         //Set coordinates to a laser
@@ -113,6 +119,7 @@ public class LaserModel {
         laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
         AddBeams(row, col);
         System.out.printf("Laser added at (%d, %d)\n", row, col);
+        System.out.println(lGrid);
     }
 
     /**
@@ -121,9 +128,11 @@ public class LaserModel {
     public void Remove(int row, int col) {
         if (!validCoordinates(row, col)) {
             System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            System.out.println(lGrid);
             return;
         } else if (lGrid[row][col] != LASER) {
             System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            System.out.println(lGrid);
             return;
         }
         //Set coordinates to empty
@@ -135,6 +144,7 @@ public class LaserModel {
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
         System.out.printf("Laser removed at (%d, %d)\n", row, col);
+        System.out.println(lGrid);
     }
 
     //Helper Functions
