@@ -43,6 +43,7 @@ public class LasersPTUI {
                     return;
                 }
                 lasers.Add(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
+                System.out.println(lasers);
                 break;
             case 'r':
                 if (commandAry.length != 3){
@@ -50,9 +51,11 @@ public class LasersPTUI {
                     return;
                 }
                 lasers.Remove(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
+                System.out.println(lasers);
                 break;
             case 'v':
                 lasers.Verify();
+                System.out.println(lasers);
                 break;
             case 'd':
                 System.out.println(lasers);
