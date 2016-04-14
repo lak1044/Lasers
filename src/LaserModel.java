@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.Scanner;
 
 /**
@@ -22,15 +24,16 @@ public class LaserModel {
     private static int cols;
     //Grid
     private static char[][] lGrid;
-    //List of lasers
-    private static ArrayList<Laser> laserList;
+    //Hash map of lasers. The key is a string made of the coordinates of said laser
+    //Key is (Integer.toString(row) + Integer.toString(col))
+    private static HashMap<String, Laser> laserHash;
 
     public LaserModel(String fileName) throws FileNotFoundException {
         Scanner in = new Scanner(new File(fileName));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
+        laserHash = new HashMap<>();
         //Filling the grid
-        laserList = new ArrayList<>();
         lGrid = new char[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -39,24 +42,6 @@ public class LaserModel {
         }
         in.close();
     }
-
-    /**
-     * adds laser at given position, raises error if cannot be placed
-     */
-    public static void Add(int row, int col) {
-        if (!validCoordinates(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
-            return;
-        } else if (isOccupied(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d\n", row, col);
-            return;
-        }
-        //Set coordinates to a laser
-        lGrid[row][col] = LASER;
-        laserList.add(new Laser(row, col));
-        AddBeams(row, col);
-    }
-
 
     public static void Verify(){
         /**
@@ -107,6 +92,23 @@ public class LaserModel {
     }
 
     /**
+     * adds laser at given position, raises error if cannot be placed
+     */
+    public static void Add(int row, int col) {
+        if (!validCoordinates(row, col)) {
+            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            return;
+        } else if (isOccupied(row, col)) {
+            System.out.printf("Error adding laser at: (%d, %d\n", row, col);
+            return;
+        }
+        //Set coordinates to a laser
+        lGrid[row][col] = LASER;
+        laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
+        AddBeams(row, col);
+    }
+
+    /**
      * removes laser from given position
      */
     public static void Remove(int row, int col){
@@ -121,17 +123,10 @@ public class LaserModel {
         //Set coordinates to empty
         lGrid[row][col] = EMPTY;
         RemoveBeams(row, col);
-        int toRemove = -1;
-        for (Laser l: laserList){
-            if (l.row == row && l.col == col){
-                toRemove = laserList.indexOf(l);
-                continue;
-            }
-            l.isValid = true;
-            AddBeams(l.row, l.col);
-        }
-        if (toRemove != -1){
-            laserList.remove(toRemove);
+        laserHash.remove(Integer.toString(row) + Integer.toString(col));
+        for (String s: laserHash.keySet()){
+            laserHash.get(s).isValid = true;
+            AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
     }
 
@@ -159,14 +154,8 @@ public class LaserModel {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i++){
             if (lGrid[i][col] == LASER){
-                for (Laser l: laserList){
-                    if (l.row == i && l.col == col){
-                        l.isValid = false;
-                    }
-                    else if (l.row == row && l.col == col){
-                        l.isValid = false;
-                    }
-                }
+                laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
+                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -176,14 +165,8 @@ public class LaserModel {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i--){
             if (lGrid[i][col] == LASER){
-                for (Laser l: laserList){
-                    if (l.row == i && l.col == col){
-                        l.isValid = false;
-                    }
-                    else if (l.row == row && l.col == col){
-                        l.isValid = false;
-                    }
-                }
+                laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
+                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -193,14 +176,8 @@ public class LaserModel {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j++){
             if (lGrid[row][j] == LASER){
-                for (Laser l: laserList){
-                    if (l.row == row && l.col == j){
-                        l.isValid = false;
-                    }
-                    else if (l.row == row && l.col == col){
-                        l.isValid = false;
-                    }
-                }
+                laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
+                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -210,14 +187,8 @@ public class LaserModel {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j--){
             if (lGrid[row][j] == LASER){
-                for (Laser l: laserList){
-                    if (l.row == row && l.col == j){
-                        l.isValid = false;
-                    }
-                    else if (l.row == row && l.col == col){
-                        l.isValid = false;
-                    }
-                }
+                laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
+                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -261,12 +232,7 @@ public class LaserModel {
     }
 
     public static boolean ValidLaser(int r, int c){
-        for (Laser l: laserList){
-            if (l.row == r && l.col == c){
-                return l.isValid;
-            }
-        }
-        return true; //Shouldn't get here, just to satisfy intellij
+        return laserHash.get(Integer.toString(r) + Integer.toString(c)).isValid;
     }
 
     public static boolean ValidPillar(int r, int c){
