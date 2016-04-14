@@ -82,12 +82,10 @@ public class LasersPTUI {
         }
 
         Scanner sc = new Scanner(System.in);
-        if (args.length==1) {
-            System.out.println(lasers.toString());
-            while (true){
-                System.out.printf("> ");
-                processCommand(sc.nextLine(), lasers);
-            }
+        System.out.println(lasers.toString());
+        while (true){
+            System.out.printf("> ");
+            processCommand(sc.nextLine(), lasers);
         }
     }
 }
