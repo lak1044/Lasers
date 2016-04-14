@@ -77,6 +77,7 @@ public class LasersPTUI {
             System.exit(0);
         }
         LaserModel lasers = new LaserModel(args[0]);
+        System.out.println(lasers);
         if (args.length == 2){
             fileCommands(args[1], lasers);
         }
