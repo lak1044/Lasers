@@ -70,7 +70,6 @@ public class LasersPTUI {
 
     public static void main(String[] args) throws FileNotFoundException {
         LaserModel lasers = new LaserModel(args[0]);
-        System.out.println(args.length);
         if (args.length == 2){
             fileCommands(args[1], lasers);
         }

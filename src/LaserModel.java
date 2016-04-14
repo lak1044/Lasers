@@ -105,7 +105,7 @@ public class LaserModel {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
         } else if (isOccupied(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d\n", row, col);
+            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
         }
         //Set coordinates to a laser
@@ -293,10 +293,10 @@ public class LaserModel {
         String result = "  ";
         for (int i = 0; i < cols; i++) {
             if (i == cols - 1) {
-                result += i + "\n  ";
+                result += i % 10 + "\n  ";
                 continue;
             }
-            result += i + " ";
+            result += i % 10 + " ";
         }
 
         for (int i = 0; i < cols * 2 - 1; i++) {
@@ -305,7 +305,7 @@ public class LaserModel {
         result += "\n";
 
         for (int i = 0; i < rows; i++) {
-            result += i + "|";
+            result += i % 10 + "|";
             for (int j = 0; j < cols; j++) {
                 if (j == cols - 1) {
                     result += lGrid[i][j] + "\n";
