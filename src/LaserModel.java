@@ -134,7 +134,7 @@ public class LaserModel {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
-        System.out.printf("Laser removed at (%d, %d):\n", row, col);
+        System.out.printf("Laser removed at: (%d, %d)\n", row, col);
     }
 
     //Helper Functions
