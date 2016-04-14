@@ -85,7 +85,11 @@ public class LasersPTUI {
         System.out.println(lasers.toString());
         while (true){
             System.out.printf("> ");
-            processCommand(sc.nextLine(), lasers);
+            String command = sc.nextLine();
+            if (command.isEmpty()){
+                continue;
+            }
+            processCommand(command, lasers);
         }
     }
 }
