@@ -27,13 +27,24 @@ public class LasersPTUI {
         System.exit(0);
     }
 
+    /**
+     * Deals with a file of commands
+     */
     public static void fileCommands(String fileName, LaserModel lasers) throws FileNotFoundException{
         Scanner sc = new Scanner(new File(fileName));
         while (sc.hasNextLine()){
-            processCommand(sc.nextLine(), lasers);
+            String command = sc.nextLine();
+            System.out.println("> " + command);
+            if (command.isEmpty()){
+                continue;
+            }
+            processCommand(command, lasers);
         }
     }
 
+    /**
+     * Takes a string of a command and processes it accordingly
+     */
     public static void processCommand(String commandStr, LaserModel lasers){
         String[] commandAry = commandStr.split(" +");
         switch (commandAry[0].charAt(0)){
