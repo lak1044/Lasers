@@ -112,6 +112,7 @@ public class LaserModel {
         lGrid[row][col] = LASER;
         laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
         AddBeams(row, col);
+        System.out.printf("Laser added at (%d, %d)\n", row, col);
     }
 
     /**
@@ -133,6 +134,7 @@ public class LaserModel {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
+        System.out.printf("Laser removed at (%d, %d)\n", row, col);
     }
 
     //Helper Functions
