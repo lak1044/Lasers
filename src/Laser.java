@@ -12,9 +12,4 @@ public class Laser {
         this.col = col;
         this.isValid = true;
     }
-
-
-    //TODO finish laser class to make it easier to deal with
-
-
 }

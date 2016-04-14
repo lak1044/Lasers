@@ -53,16 +53,15 @@ public class LaserModel {
         in.close();
     }
 
+    /**
+     * The verify command displays a status message that indicates whether the safe
+     * is valid or not. In order to be valid, none of the rules of the safe may be
+     * violated. Each tile that is not a pillar must have either a laser or beam
+     * covering it. Each pillar that requires a certain number of neighboring lasers
+     * must add up exactly. If two or more lasers are in sight of each other, in the
+     * cardinal directions, it is invalid.
+     */
     public void Verify() {
-        /**
-         * The verify command displays a status message that indicates whether the safe
-         * is valid or not. In order to be valid, none of the rules of the safe may be
-         * violated. Each tile that is not a pillar must have either a laser or beam
-         * covering it. Each pillar that requires a certain number of neighboring lasers
-         * must add up exactly. If two or more lasers are in sight of each other, in the
-         * cardinal directions, it is invalid.
-         */
-
         //check that there are no empty tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -204,9 +203,6 @@ public class LaserModel {
 
     /**
      * Remove beams from a given laser position
-     *
-     * @param row
-     * @param col
      */
     public void RemoveBeams(int row, int col) {
         //Remove beam down
