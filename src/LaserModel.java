@@ -43,7 +43,7 @@ public class LaserModel {
         in.close();
     }
 
-    public static void Verify(){
+    public void Verify() {
         /**
          * The verify command displays a status message that indicates whether the safe
          * is valid or not. In order to be valid, none of the rules of the safe may be
@@ -54,11 +54,11 @@ public class LaserModel {
          */
 
         //check that there are no empty tiles
-        for (int i=0; i< rows; i++){
-            for (int j=0; j<cols; j++){
-                switch (lGrid[i][j]){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                switch (lGrid[i][j]) {
                     case 'L':
-                        if (!ValidLaser(i,j)) {
+                        if (!ValidLaser(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
@@ -75,14 +75,14 @@ public class LaserModel {
                     case '2':
                     case '3':
                     case '4':
-                        if (!ValidPillar(i,j)){
-                            System.out.println("Error verifying at: ("+i+", "+j+")");
+                        if (!ValidPillar(i, j)) {
+                            System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
                         break;
                     case '.':
                         //case were the tile is not filled
-                        System.out.println("Error verifying at: ("+i+", "+j+")");
+                        System.out.println("Error verifying at: (" + i + ", " + j + ")");
                         return;
 
                 }
@@ -94,7 +94,7 @@ public class LaserModel {
     /**
      * adds laser at given position, raises error if cannot be placed
      */
-    public static void Add(int row, int col) {
+    public void Add(int row, int col) {
         if (!validCoordinates(row, col)) {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
@@ -111,12 +111,11 @@ public class LaserModel {
     /**
      * removes laser from given position
      */
-    public static void Remove(int row, int col){
-        if (!validCoordinates(row, col)){
+    public void Remove(int row, int col) {
+        if (!validCoordinates(row, col)) {
             System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
             return;
-        }
-        else if (lGrid[row][col] != LASER){
+        } else if (lGrid[row][col] != LASER) {
             System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
             return;
         }
@@ -124,36 +123,37 @@ public class LaserModel {
         lGrid[row][col] = EMPTY;
         RemoveBeams(row, col);
         laserHash.remove(Integer.toString(row) + Integer.toString(col));
-        for (String s: laserHash.keySet()){
+        for (String s : laserHash.keySet()) {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
     }
 
     //Helper Functions
+
     /**
      * Checks if the given coordinates are occupied (i.e. not empty)
      */
-    public static boolean isOccupied(int row, int col) {
+    public boolean isOccupied(int row, int col) {
         return (lGrid[row][col] != EMPTY && lGrid[row][col] != BEAM);
     }
 
     /**
      * Checks if the given coordinates are within the grid
      */
-    public static boolean validCoordinates(int row, int col) {
+    public boolean validCoordinates(int row, int col) {
         return ((row >= 0) && (row < rows) && (col >= 0) && (col < cols));
     }
 
     /**
      * Extends beams from given laser coordinate
      */
-    public static void AddBeams(int row, int col){
+    public void AddBeams(int row, int col) {
         //Extend beam down
         for (int i = row + 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
-                lGrid[i][col] != ANYPILLAR; i++){
-            if (lGrid[i][col] == LASER){
+                lGrid[i][col] != ANYPILLAR; i++) {
+            if (lGrid[i][col] == LASER) {
                 laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
                 laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
@@ -163,8 +163,8 @@ public class LaserModel {
         //Extend the beam up
         for (int i = row - 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
-                lGrid[i][col] != ANYPILLAR; i--){
-            if (lGrid[i][col] == LASER){
+                lGrid[i][col] != ANYPILLAR; i--) {
+            if (lGrid[i][col] == LASER) {
                 laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
                 laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
@@ -172,10 +172,10 @@ public class LaserModel {
             lGrid[i][col] = BEAM;
         }
         //Extend the beam right
-        for (int j =  col + 1; validCoordinates(row, j) &&
+        for (int j = col + 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
-                lGrid[row][j] != ANYPILLAR; j++){
-            if (lGrid[row][j] == LASER){
+                lGrid[row][j] != ANYPILLAR; j++) {
+            if (lGrid[row][j] == LASER) {
                 laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
                 laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
@@ -183,10 +183,10 @@ public class LaserModel {
             lGrid[row][j] = BEAM;
         }
         //extend the beam left
-        for (int j = col - 1; validCoordinates(row, j)&&
+        for (int j = col - 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
-                lGrid[row][j] != ANYPILLAR; j--){
-            if (lGrid[row][j] == LASER){
+                lGrid[row][j] != ANYPILLAR; j--) {
+            if (lGrid[row][j] == LASER) {
                 laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
                 laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
                 break;
@@ -197,102 +197,110 @@ public class LaserModel {
 
     /**
      * Remove beams from a given laser position
+     *
      * @param row
      * @param col
      */
-    public static void RemoveBeams(int row, int col){
+    public void RemoveBeams(int row, int col) {
         //Remove beam down
         for (int i = row + 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR &&
-                lGrid[i][col] != LASER; i++){
+                lGrid[i][col] != LASER; i++) {
             lGrid[i][col] = EMPTY;
         }
         //Remove the beam up
         for (int i = row - 1; validCoordinates(i, col) &&
                 !Character.isDigit(lGrid[i][col])
                 && lGrid[i][col] != ANYPILLAR &&
-                lGrid[i][col] != LASER; i--){
+                lGrid[i][col] != LASER; i--) {
             lGrid[i][col] = EMPTY;
         }
         //Remove the beam right
-        for (int j =  col + 1; validCoordinates(row, j) &&
+        for (int j = col + 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR &&
-                lGrid[row][j] != LASER; j++){
+                lGrid[row][j] != LASER; j++) {
             lGrid[row][j] = EMPTY;
         }
         //Remove the beam left
         for (int j = col - 1; validCoordinates(row, j) &&
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR &&
-                lGrid[row][j] != LASER; j--){
+                lGrid[row][j] != LASER; j--) {
             lGrid[row][j] = EMPTY;
         }
     }
 
-    public static boolean ValidLaser(int r, int c){
+    /**
+     * Returns whether or not the laser is valid.
+     * This is handled when placing lasers and is in the state of the laser itself
+     */
+    public boolean ValidLaser(int r, int c) {
         return laserHash.get(Integer.toString(r) + Integer.toString(c)).isValid;
     }
 
-    public static boolean ValidPillar(int r, int c){
+    /**
+     * Returns whether or not a pillar is valid
+     */
+    public boolean ValidPillar(int r, int c) {
         boolean isValid;
-        String checkStr = lGrid[r][c]+"";
+        String checkStr = lGrid[r][c] + "";
         int toCheck = Integer.parseInt(checkStr);
         int checkCount = 0;
-        int top=r-1;
-        int bottom=r+1;
-        int left=c-1;
-        int right=c+1;
+        int top = r - 1;
+        int bottom = r + 1;
+        int left = c - 1;
+        int right = c + 1;
         //check top
-        if (top>=0){
-            if (lGrid[top][c]== LASER){
-                checkCount+=1;
+        if (top >= 0) {
+            if (lGrid[top][c] == LASER) {
+                checkCount += 1;
             }
         }
         //check bottom
-        if (bottom<rows){
-            if (lGrid[bottom][c]==LASER){
-                checkCount+=1;
+        if (bottom < rows) {
+            if (lGrid[bottom][c] == LASER) {
+                checkCount += 1;
             }
         }
         //check left
-        if (left>=0){
-            if (lGrid[r][left]==LASER){
-                checkCount+=1;
+        if (left >= 0) {
+            if (lGrid[r][left] == LASER) {
+                checkCount += 1;
             }
         }
         //check right
-        if (right<cols){
-            if (lGrid[r][right]==LASER){
-                checkCount+=1;
+        if (right < cols) {
+            if (lGrid[r][right] == LASER) {
+                checkCount += 1;
             }
         }
-        isValid = toCheck==checkCount;
+        isValid = toCheck == checkCount;
         return isValid;
     }
 
     //Overrides
     @Override
-    public String toString(){
+    public String toString() {
         String result = "  ";
-        for (int i = 0; i < cols; i++){
-            if (i == cols - 1){
+        for (int i = 0; i < cols; i++) {
+            if (i == cols - 1) {
                 result += i + "\n  ";
                 continue;
             }
             result += i + " ";
         }
 
-        for (int i = 0; i < cols * 2 - 1; i++){
+        for (int i = 0; i < cols * 2 - 1; i++) {
             result += "-";
         }
         result += "\n";
 
-        for (int i = 0; i < rows; i++){
+        for (int i = 0; i < rows; i++) {
             result += i + "|";
-            for (int j = 0; j < cols; j++){
-                if (j == cols - 1){
+            for (int j = 0; j < cols; j++) {
+                if (j == cols - 1) {
                     result += lGrid[i][j] + "\n";
                     continue;
                 }
