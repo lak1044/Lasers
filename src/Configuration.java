@@ -22,7 +22,7 @@ public interface Configuration {
      *
      * @return true if valid; false otherwise
      */
-    public boolean isValid();
+    public boolean Verify();
 
     /**
      * Is the current configuration a goal?

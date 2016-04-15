@@ -59,7 +59,7 @@ public class Backtracker {
             return Optional.of(config);
         } else {
             for (Configuration child : config.getSuccessors()) {
-                if (child.isValid()) {
+                if (child.Verify()) {
                     debugPrint("\tValid successor", child);
                     Optional<Configuration> sol = solve(child);
                     if (sol.isPresent()) {
