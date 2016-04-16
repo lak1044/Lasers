@@ -1,14 +1,12 @@
+import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.IntSummaryStatistics;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by lak1044 on 4/13/16.
  */
-public class LaserModel{
+public class SafeModel implements Configuration {
 
     //Empty cell
     public static final char EMPTY = '.';
@@ -26,12 +24,22 @@ public class LaserModel{
     private static char[][] lGrid;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
     //Key is (Integer.toString(row) + Integer.toString(col))
-    private static HashMap<String, Laser> laserHash;
+    private HashMap<String, Laser> laserHash;
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
-    private static HashMap<String, Integer> pillarHash;
+    private static HashMap<String, Pillar> pillarHash;
+    //Last row/column for backtracking purposes
+    private int lastRow = 0;
+    private int lastCol = 0;
 
-    public LaserModel(String fileName) throws FileNotFoundException {
+    /**
+     * Constructor for making a safe
+     *  Has a value for the number of rows and columns,
+     *      the grid itself
+     *      the positions of pillars
+     *      and a list for lasers to be added in later
+     */
+    public SafeModel(String fileName) throws FileNotFoundException {
         Scanner in = new Scanner(new File(fileName));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -42,15 +50,28 @@ public class LaserModel{
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 lGrid[i][j] = in.next().charAt(0);
-                if (Character.isDigit(lGrid[i][j])){
-                    pillarHash.put(Integer.toString(i) + Integer.toString(j), Character.getNumericValue(lGrid[i][j]));
-                }
-                else if (lGrid[i][j] == ANYPILLAR){
-                    pillarHash.put(Integer.toString(i) + Integer.toString(j), -1);
+                if (Character.isDigit(lGrid[i][j])) {
+                    pillarHash.put(Integer.toString(i) + Integer.toString(j), new Pillar(i, j, Character.getNumericValue(lGrid[i][j])));
                 }
             }
         }
         in.close();
+    }
+
+    /**
+     * Copy constructor.  Takes a config, other, and makes a full "deep" copy
+     * of its instance data.
+     */
+    public SafeModel(SafeModel other) {
+        lGrid = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                lGrid[i][j] = other.lGrid[i][j];
+            }
+        }
+        laserHash = other.laserHash;
+        lastRow = other.lastRow;
+        lastCol = other.lastCol;
     }
 
     /**
@@ -68,6 +89,18 @@ public class LaserModel{
         lGrid[row][col] = LASER;
         laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
         AddBeams(row, col);
+        if (isColumn(row - 1, col)){
+            pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers += 1;
+        }
+        if (isColumn(row + 1, col)){
+            pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers += 1;
+        }
+        if (isColumn(row, col - 1)){
+            pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers += 1;
+        }
+        if (isColumn(row, col + 1)){
+            pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers += 1;
+        }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
     }
 
@@ -89,6 +122,18 @@ public class LaserModel{
         for (String s : laserHash.keySet()) {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
+        }
+        if (isColumn(row - 1, col)){
+            pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers -= 1;
+        }
+        if (isColumn(row + 1, col)){
+            pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers -= 1;
+        }
+        if (isColumn(row, col - 1)){
+            pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers -= 1;
+        }
+        if (isColumn(row, col + 1)){
+            pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
     }
@@ -121,7 +166,8 @@ public class LaserModel{
                     case '2':
                     case '3':
                     case '4':
-                        if (!ValidPillar(i, j)) {
+                        if (pillarHash.get(Integer.toString(i) + Integer.toString(j)).currLasers !=
+                                pillarHash.get(Integer.toString(i) + Integer.toString(j)).maxLasers) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
@@ -135,6 +181,24 @@ public class LaserModel{
             }
         }
         System.out.println("Safe is fully verified!");
+    }
+
+    /**
+     * Checks whether or not the current state of the model is valid or not
+     *  Does not worry about being the goal
+     */
+    public boolean isValid() {
+        for (String s: laserHash.keySet()){
+            if (!laserHash.get(s).isValid){
+                return false;
+            }
+        }
+        for (String s: pillarHash.keySet()){
+            if (pillarHash.get(s).currLasers > pillarHash.get(s).maxLasers){
+                return false;
+            }
+        }
+        return true;
     }
 
     //Helper Functions
@@ -241,53 +305,61 @@ public class LaserModel{
      * Returns whether or not the laser is valid.
      * This is handled when placing lasers and is in the state of the laser itself
      */
-    public boolean ValidLaser(int r, int c) {
-        return laserHash.get(Integer.toString(r) + Integer.toString(c)).isValid;
+    public boolean ValidLaser(int row, int col) {
+        return laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid;
     }
 
     /**
-     * Returns whether or not a pillar is valid
+     * Returns whether or not the coordinates given point to a numerical pillar
      */
-    public boolean ValidPillar(int r, int c) {
-        if (pillarHash.get(Integer.toString(r) + Integer.toString(c)) == ANYPILLAR){
-            return true;
+    public boolean isColumn(int row, int col){
+        if (!validCoordinates(row, col)){
+            return false;
         }
-        boolean isValid;
-        int toCheck = pillarHash.get(Integer.toString(r) + Integer.toString(c));
-        int checkCount = 0;
-        int top = r - 1;
-        int bottom = r + 1;
-        int left = c - 1;
-        int right = c + 1;
-        //check top
-        if (top >= 0) {
-            if (lGrid[top][c] == LASER) {
-                checkCount += 1;
-            }
-        }
-        //check bottom
-        if (bottom < rows) {
-            if (lGrid[bottom][c] == LASER) {
-                checkCount += 1;
-            }
-        }
-        //check left
-        if (left >= 0) {
-            if (lGrid[r][left] == LASER) {
-                checkCount += 1;
-            }
-        }
-        //check right
-        if (right < cols) {
-            if (lGrid[r][right] == LASER) {
-                checkCount += 1;
-            }
-        }
-        isValid = toCheck == checkCount;
-        return isValid;
+        return (Character.isDigit(lGrid[row][col]));
     }
 
     //Overrides
+    @Override
+    public Collection<Configuration> getSuccessors() {
+        return null;
+        //TODO finish getsuccessors for backtracking
+    }
+
+    @Override
+    public boolean isGoal() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                switch (lGrid[i][j]) {
+                    //Doesn't need to worry about beams or X-based pillars
+                    case BEAM:
+                    case ANYPILLAR:
+                        break;
+                    case LASER:
+                        if (!ValidLaser(i, j)) {
+                            return false;
+                        }
+                        break;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                        if (pillarHash.get(Integer.toString(i) + Integer.toString(j)).currLasers !=
+                                pillarHash.get(Integer.toString(i) + Integer.toString(j)).maxLasers) {
+                            return false;
+                        }
+                        break;
+                    //Must be empty if failed all other cases
+                    default:
+                        return false;
+
+                }
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         String result = "  ";
@@ -307,11 +379,10 @@ public class LaserModel{
         for (int i = 0; i < rows; i++) {
             result += i % 10 + "|";
             for (int j = 0; j < cols; j++) {
-                if (j == cols - 1 && i == rows - 1){
+                if (j == cols - 1 && i == rows - 1) {
                     result += lGrid[i][j];
                     continue;
-                }
-                else if (j == cols - 1) {
+                } else if (j == cols - 1) {
                     result += lGrid[i][j] + "\n";
                     continue;
                 }

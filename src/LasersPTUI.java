@@ -30,7 +30,7 @@ public class LasersPTUI {
     /**
      * Deals with a file of commands
      */
-    public static void fileCommands(String fileName, LaserModel lasers) throws FileNotFoundException{
+    public static void fileCommands(String fileName, SafeModel lasers) throws FileNotFoundException{
         Scanner sc = new Scanner(new File(fileName));
         while (sc.hasNextLine()){
             String command = sc.nextLine();
@@ -45,7 +45,7 @@ public class LasersPTUI {
     /**
      * Takes a string of a command and processes it accordingly
      */
-    public static void processCommand(String commandStr, LaserModel lasers){
+    public static void processCommand(String commandStr, SafeModel lasers){
         String[] commandAry = commandStr.split(" +");
         switch (commandAry[0].charAt(0)){
             case 'a':
@@ -87,10 +87,10 @@ public class LasersPTUI {
             System.out.println("Usage: java LasersPTUI safe-file [input]");
             System.exit(0);
         }
-        LaserModel lasers = new LaserModel(args[0]);
-        System.out.println(lasers);
+        SafeModel safe = new SafeModel(args[0]);
+        System.out.println(safe);
         if (args.length == 2){
-            fileCommands(args[1], lasers);
+            fileCommands(args[1], safe);
         }
 
         Scanner sc = new Scanner(System.in);
@@ -100,7 +100,7 @@ public class LasersPTUI {
             if (command.isEmpty()){
                 continue;
             }
-            processCommand(command, lasers);
+            processCommand(command, safe);
         }
     }
 }

@@ -6,7 +6,9 @@ public class Laser {
     int col;
     boolean isValid;
 
-
+    /**
+     * Constuct a new laser object
+     */
     public Laser(int row, int col){
         this.row = row;
         this.col = col;
