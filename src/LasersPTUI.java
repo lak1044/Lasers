@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -26,36 +27,80 @@ public class LasersPTUI {
         System.exit(0);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        LaserModel lasers = new LaserModel(args[0]);
-        Scanner sc = new Scanner(System.in);
-        if (args.length==1) {
-            System.out.println(lasers.toString());
-            while (true){
-                System.out.printf("> ");
-                String s = sc.nextLine();
-                if (s.charAt(0)=='h'){
-                    Help();
-                }
-                else if (s.charAt(0) == 'a'){
-                    String[] add=s.split(" ");
-                    lasers.Add(Integer.parseInt(add[1]),Integer.parseInt(add[2]));
-                }
-                else if (s.charAt(0)=='r'){
-                    String[] remove = s.split(" ");
-                    lasers.Remove(Integer.parseInt(remove[1]), Integer.parseInt(remove[2]));
-                }
-                else if (s.charAt(0)=='d'){
-                    System.out.println(lasers);
-                }
-                else if (s.charAt(0)=='v'){
-                    lasers.Verify();
-                }
-                else if (s.charAt(0)=='q'){
-                    Quit();
-                }
-
+    /**
+     * Deals with a file of commands
+     */
+    public static void fileCommands(String fileName, LaserModel lasers) throws FileNotFoundException{
+        Scanner sc = new Scanner(new File(fileName));
+        while (sc.hasNextLine()){
+            String command = sc.nextLine();
+            System.out.println("> " + command);
+            if (command.isEmpty()){
+                continue;
             }
+            processCommand(command, lasers);
+        }
+    }
+
+    /**
+     * Takes a string of a command and processes it accordingly
+     */
+    public static void processCommand(String commandStr, LaserModel lasers){
+        String[] commandAry = commandStr.split(" +");
+        switch (commandAry[0].charAt(0)){
+            case 'a':
+                if (commandAry.length != 3){
+                    System.out.println("Incorrect coordinates");
+                    return;
+                }
+                lasers.Add(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
+                System.out.println(lasers);
+                break;
+            case 'r':
+                if (commandAry.length != 3){
+                    System.out.println("Incorrect coordinates");
+                    return;
+                }
+                lasers.Remove(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
+                System.out.println(lasers);
+                break;
+            case 'v':
+                lasers.Verify();
+                System.out.println(lasers);
+                break;
+            case 'd':
+                System.out.println(lasers);
+                 break;
+            case 'h':
+                Help();
+                break;
+            case 'q':
+                Quit();
+                break;
+            default:
+                System.out.println("Unrecognized command: " + commandAry[0]);
+        }
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        if (args.length == 0){
+            System.out.println("Usage: java LasersPTUI safe-file [input]");
+            System.exit(0);
+        }
+        LaserModel lasers = new LaserModel(args[0]);
+        System.out.println(lasers);
+        if (args.length == 2){
+            fileCommands(args[1], lasers);
+        }
+
+        Scanner sc = new Scanner(System.in);
+        while (true){
+            System.out.printf("> ");
+            String command = sc.nextLine();
+            if (command.isEmpty()){
+                continue;
+            }
+            processCommand(command, lasers);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * Created by lak1044 on 4/13/16.
  */
-public class LaserModel {
+public class LaserModel{
 
     //Empty cell
     public static final char EMPTY = '.';
@@ -53,16 +53,55 @@ public class LaserModel {
         in.close();
     }
 
-    public void Verify() {
-        /**
-         * The verify command displays a status message that indicates whether the safe
-         * is valid or not. In order to be valid, none of the rules of the safe may be
-         * violated. Each tile that is not a pillar must have either a laser or beam
-         * covering it. Each pillar that requires a certain number of neighboring lasers
-         * must add up exactly. If two or more lasers are in sight of each other, in the
-         * cardinal directions, it is invalid.
-         */
+    /**
+     * adds laser at given position, raises error if cannot be placed
+     */
+    public void Add(int row, int col) {
+        if (!validCoordinates(row, col)) {
+            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            return;
+        } else if (isOccupied(row, col)) {
+            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        //Set coordinates to a laser
+        lGrid[row][col] = LASER;
+        laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
+        AddBeams(row, col);
+        System.out.printf("Laser added at: (%d, %d)\n", row, col);
+    }
 
+    /**
+     * removes laser from given position
+     */
+    public void Remove(int row, int col) {
+        if (!validCoordinates(row, col)) {
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        } else if (lGrid[row][col] != LASER) {
+            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            return;
+        }
+        //Set coordinates to empty
+        lGrid[row][col] = EMPTY;
+        RemoveBeams(row, col);
+        laserHash.remove(Integer.toString(row) + Integer.toString(col));
+        for (String s : laserHash.keySet()) {
+            laserHash.get(s).isValid = true;
+            AddBeams(laserHash.get(s).row, laserHash.get(s).col);
+        }
+        System.out.printf("Laser removed at: (%d, %d)\n", row, col);
+    }
+
+    /**
+     * The verify command displays a status message that indicates whether the safe
+     * is valid or not. In order to be valid, none of the rules of the safe may be
+     * violated. Each tile that is not a pillar must have either a laser or beam
+     * covering it. Each pillar that requires a certain number of neighboring lasers
+     * must add up exactly. If two or more lasers are in sight of each other, in the
+     * cardinal directions, it is invalid.
+     */
+    public void Verify() {
         //check that there are no empty tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -96,44 +135,6 @@ public class LaserModel {
             }
         }
         System.out.println("Safe is fully verified!");
-    }
-
-    /**
-     * adds laser at given position, raises error if cannot be placed
-     */
-    public void Add(int row, int col) {
-        if (!validCoordinates(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
-            return;
-        } else if (isOccupied(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d\n", row, col);
-            return;
-        }
-        //Set coordinates to a laser
-        lGrid[row][col] = LASER;
-        laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
-        AddBeams(row, col);
-    }
-
-    /**
-     * removes laser from given position
-     */
-    public void Remove(int row, int col) {
-        if (!validCoordinates(row, col)) {
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
-            return;
-        } else if (lGrid[row][col] != LASER) {
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
-            return;
-        }
-        //Set coordinates to empty
-        lGrid[row][col] = EMPTY;
-        RemoveBeams(row, col);
-        laserHash.remove(Integer.toString(row) + Integer.toString(col));
-        for (String s : laserHash.keySet()) {
-            laserHash.get(s).isValid = true;
-            AddBeams(laserHash.get(s).row, laserHash.get(s).col);
-        }
     }
 
     //Helper Functions
@@ -204,9 +205,6 @@ public class LaserModel {
 
     /**
      * Remove beams from a given laser position
-     *
-     * @param row
-     * @param col
      */
     public void RemoveBeams(int row, int col) {
         //Remove beam down
@@ -295,10 +293,10 @@ public class LaserModel {
         String result = "  ";
         for (int i = 0; i < cols; i++) {
             if (i == cols - 1) {
-                result += i + "\n  ";
+                result += i % 10 + "\n  ";
                 continue;
             }
-            result += i + " ";
+            result += i % 10 + " ";
         }
 
         for (int i = 0; i < cols * 2 - 1; i++) {
@@ -307,9 +305,13 @@ public class LaserModel {
         result += "\n";
 
         for (int i = 0; i < rows; i++) {
-            result += i + "|";
+            result += i % 10 + "|";
             for (int j = 0; j < cols; j++) {
-                if (j == cols - 1) {
+                if (j == cols - 1 && i == rows - 1){
+                    result += lGrid[i][j];
+                    continue;
+                }
+                else if (j == cols - 1) {
                     result += lGrid[i][j] + "\n";
                     continue;
                 }
