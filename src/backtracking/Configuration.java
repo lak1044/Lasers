@@ -1,13 +1,14 @@
+package backtracking;
+
 import java.util.Collection;
 
 /**
  * The representation of a single configuration for a puzzle.
- * The Backtracker depends on these routines in order to
+ * The backtracking.Backtracker depends on these routines in order to
  * solve a puzzle.  Therefore, all puzzles must implement this
  * interface.
  *
- * @author sps (Sean Strout @ RIT CS)
- * @author jeh (James Heliotis @ RIT CS)
+ * @author Sean Strout @ RIT CS
  */
 public interface Configuration {
     /**
@@ -15,7 +16,7 @@ public interface Configuration {
      *
      * @return All successors, valid and invalid
      */
-    public Collection<Configuration> getSuccessors();
+    public Collection< Configuration > getSuccessors();
 
     /**
      * Is the current configuration valid or not?

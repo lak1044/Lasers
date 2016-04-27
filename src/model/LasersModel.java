@@ -1,12 +1,12 @@
-import java.io.CharArrayReader;
+package model;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Scanner;
 
-/**
- * Created by lak1044 on 4/13/16.
- */
-public class SafeModel implements Configuration {
+public class LasersModel extends Observable {
 
     //Empty cell
     public static final char EMPTY = '.';
@@ -32,15 +32,8 @@ public class SafeModel implements Configuration {
     private int lastRow = 0;
     private int lastCol = 0;
 
-    /**
-     * Constructor for making a safe
-     *  Has a value for the number of rows and columns,
-     *      the grid itself
-     *      the positions of pillars
-     *      and a list for lasers to be added in later
-     */
-    public SafeModel(String fileName) throws FileNotFoundException {
-        Scanner in = new Scanner(new File(fileName));
+    public LasersModel(String filename) throws FileNotFoundException {
+        Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
         laserHash = new HashMap<>();
@@ -59,22 +52,6 @@ public class SafeModel implements Configuration {
     }
 
     /**
-     * Copy constructor.  Takes a config, other, and makes a full "deep" copy
-     * of its instance data.
-     */
-    public SafeModel(SafeModel other) {
-        lGrid = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                lGrid[i][j] = other.lGrid[i][j];
-            }
-        }
-        laserHash = other.laserHash;
-        lastRow = other.lastRow;
-        lastCol = other.lastCol;
-    }
-
-    /**
      * adds laser at given position, raises error if cannot be placed
      */
     public void Add(int row, int col) {
@@ -89,16 +66,16 @@ public class SafeModel implements Configuration {
         lGrid[row][col] = LASER;
         laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
         AddBeams(row, col);
-        if (isColumn(row - 1, col)){
+        if (isColumn(row - 1, col)) {
             pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers += 1;
         }
-        if (isColumn(row + 1, col)){
+        if (isColumn(row + 1, col)) {
             pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers += 1;
         }
-        if (isColumn(row, col - 1)){
+        if (isColumn(row, col - 1)) {
             pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers += 1;
         }
-        if (isColumn(row, col + 1)){
+        if (isColumn(row, col + 1)) {
             pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers += 1;
         }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
@@ -123,16 +100,16 @@ public class SafeModel implements Configuration {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
-        if (isColumn(row - 1, col)){
+        if (isColumn(row - 1, col)) {
             pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers -= 1;
         }
-        if (isColumn(row + 1, col)){
+        if (isColumn(row + 1, col)) {
             pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers -= 1;
         }
-        if (isColumn(row, col - 1)){
+        if (isColumn(row, col - 1)) {
             pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers -= 1;
         }
-        if (isColumn(row, col + 1)){
+        if (isColumn(row, col + 1)) {
             pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
@@ -185,16 +162,16 @@ public class SafeModel implements Configuration {
 
     /**
      * Checks whether or not the current state of the model is valid or not
-     *  Does not worry about being the goal
+     * Does not worry about being the goal
      */
     public boolean isValid() {
-        for (String s: laserHash.keySet()){
-            if (!laserHash.get(s).isValid){
+        for (String s : laserHash.keySet()) {
+            if (!laserHash.get(s).isValid) {
                 return false;
             }
         }
-        for (String s: pillarHash.keySet()){
-            if (pillarHash.get(s).currLasers > pillarHash.get(s).maxLasers){
+        for (String s : pillarHash.keySet()) {
+            if (pillarHash.get(s).currLasers > pillarHash.get(s).maxLasers) {
                 return false;
             }
         }
@@ -312,53 +289,14 @@ public class SafeModel implements Configuration {
     /**
      * Returns whether or not the coordinates given point to a numerical pillar
      */
-    public boolean isColumn(int row, int col){
-        if (!validCoordinates(row, col)){
+    public boolean isColumn(int row, int col) {
+        if (!validCoordinates(row, col)) {
             return false;
         }
         return (Character.isDigit(lGrid[row][col]));
     }
 
     //Overrides
-    @Override
-    public Collection<Configuration> getSuccessors() {
-        return null;
-        //TODO finish getsuccessors for backtracking
-    }
-
-    @Override
-    public boolean isGoal() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                switch (lGrid[i][j]) {
-                    //Doesn't need to worry about beams or X-based pillars
-                    case BEAM:
-                    case ANYPILLAR:
-                        break;
-                    case LASER:
-                        if (!ValidLaser(i, j)) {
-                            return false;
-                        }
-                        break;
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                        if (pillarHash.get(Integer.toString(i) + Integer.toString(j)).currLasers !=
-                                pillarHash.get(Integer.toString(i) + Integer.toString(j)).maxLasers) {
-                            return false;
-                        }
-                        break;
-                    //Must be empty if failed all other cases
-                    default:
-                        return false;
-
-                }
-            }
-        }
-        return true;
-    }
 
     @Override
     public String toString() {
@@ -390,5 +328,15 @@ public class SafeModel implements Configuration {
             }
         }
         return result;
+    }
+    // TODO
+
+    /**
+     * A utility method that indicates the model has changed and
+     * notifies observers
+     */
+    private void announceChange() {
+        setChanged();
+        notifyObservers();
     }
 }

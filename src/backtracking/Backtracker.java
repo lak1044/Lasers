@@ -1,4 +1,4 @@
-import javafx.util.Pair;
+package backtracking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,17 @@ import java.util.Optional;
  * It has a solver that can take a valid configuration and return a
  * solution, if one exists.
  *
- * @author sps (Sean Strout @ RIT CS)
- * @author jeh (James Heliotis @ RIT CS)
+ * This file comes from the backtracking lab. It should be useful
+ * in this project. A second method has been added that you should
+ * implement.
+ *
+ * @author Sean Strout @ RIT CS
+ * @author James Heliotis @ RIT CS
+ * @author YOUR NAME HERE
  */
 public class Backtracker {
-    /** Should debug output be enabled */
-    private boolean debug;
 
-    /** List to keep log of Configurations and debug messages for passing to the debugger */
-    private List<Pair<Configuration,String>> configLog;
+    private boolean debug;
 
     /**
      * Initialize a new backtracker.
@@ -28,21 +30,19 @@ public class Backtracker {
         this.debug = debug;
         if (this.debug) {
             System.out.println("Backtracker debugging enabled...");
-            configLog = new ArrayList<>();
         }
     }
 
     /**
      * A utility routine for printing out various debug messages.
      *
-     * @param msg The type of config being looked at (current, goal,
-     *  successor, e.g.)
+     * @param msg    The type of config being looked at (current, goal,
+     *               successor, e.g.)
      * @param config The config to display
      */
     private void debugPrint(String msg, Configuration config) {
         if (this.debug) {
             System.out.println(msg + ":\n" + config);
-            configLog.add(new Pair<>(config,msg.trim()));
         }
     }
 
@@ -74,7 +74,15 @@ public class Backtracker {
         return Optional.empty();
     }
 
-    public List<Pair<Configuration,String>> getConfigLog() {
-        return configLog;
+    /**
+     * Find a goal configuration if it exists, and how to get there.
+     *
+     * @param current the starting configuration
+     * @return a list of configurations to get to a goal configuration.
+     * If there are none, return null.
+     */
+    public List<Configuration> solveWithPath(Configuration current) {
+        // TODO
+        return new ArrayList<>();  // change this
     }
 }
