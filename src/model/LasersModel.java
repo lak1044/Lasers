@@ -44,7 +44,8 @@ public class LasersModel extends Observable {
             for (int j = 0; j < cols; j++) {
                 lGrid[i][j] = in.next().charAt(0);
                 if (Character.isDigit(lGrid[i][j])) {
-                    pillarHash.put(Integer.toString(i) + Integer.toString(j), new Pillar(i, j, Character.getNumericValue(lGrid[i][j])));
+                    Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
+                    pillarHash.put(newPillar.hash, newPillar);
                 }
             }
         }
@@ -64,7 +65,8 @@ public class LasersModel extends Observable {
         }
         //Set coordinates to a laser
         lGrid[row][col] = LASER;
-        laserHash.put(Integer.toString(row) + Integer.toString(col), new Laser(row, col));
+        Laser newLaser = new Laser(row, col);
+        laserHash.put(newLaser.hash, newLaser);
         AddBeams(row, col);
         if (isColumn(row - 1, col)) {
             pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers += 1;
