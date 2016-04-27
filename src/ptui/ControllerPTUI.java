@@ -120,6 +120,5 @@ public class ControllerPTUI  {
             }
             processCommand(command, this.model);
         }
-        // TODO
     }
 }
