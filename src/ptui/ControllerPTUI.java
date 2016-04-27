@@ -105,7 +105,21 @@ public class ControllerPTUI  {
      * Run the main loop.  This is the entry point for the controller
      * @param inputFile The name of the input command file, if specified
      */
-    public void run(String inputFile) {
+    public void run(String inputFile) throws FileNotFoundException{
+        System.out.println(this.model);
+        if (inputFile != null){
+            fileCommands(inputFile, this.model);
+        }
+
+        Scanner sc = new Scanner(System.in);
+        while (true){
+            System.out.printf("> ");
+            String command = sc.nextLine();
+            if (command.isEmpty()){
+                continue;
+            }
+            processCommand(command, this.model);
+        }
         // TODO
     }
 }
