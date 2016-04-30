@@ -23,14 +23,11 @@ public class LasersModel extends Observable {
     //Grid
     private static char[][] lGrid;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
-    //Key is (Integer.toString(row) + Integer.toString(col))
+    //Key is (hash(row, col))
     private HashMap<String, Laser> laserHash;
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
     private static HashMap<String, Pillar> pillarHash;
-    //Last row/column for backtracking purposes
-    private int lastRow = 0;
-    private int lastCol = 0;
 
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = new Scanner(new File(filename));
@@ -45,7 +42,7 @@ public class LasersModel extends Observable {
                 lGrid[i][j] = in.next().charAt(0);
                 if (Character.isDigit(lGrid[i][j])) {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
-                    pillarHash.put(newPillar.hash, newPillar);
+                    pillarHash.put(hash(i, j), newPillar);
                 }
             }
         }
@@ -66,19 +63,19 @@ public class LasersModel extends Observable {
         //Set coordinates to a laser
         lGrid[row][col] = LASER;
         Laser newLaser = new Laser(row, col);
-        laserHash.put(newLaser.hash, newLaser);
+        laserHash.put(hash(row, col), newLaser);
         AddBeams(row, col);
         if (isColumn(row - 1, col)) {
-            pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers += 1;
+            pillarHash.get(hash(row - 1, col)).currLasers += 1;
         }
         if (isColumn(row + 1, col)) {
-            pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers += 1;
+            pillarHash.get(hash(row + 1, col)).currLasers += 1;
         }
         if (isColumn(row, col - 1)) {
-            pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers += 1;
+            pillarHash.get(hash(row, col - 1)).currLasers += 1;
         }
         if (isColumn(row, col + 1)) {
-            pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers += 1;
+            pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
     }
@@ -97,22 +94,22 @@ public class LasersModel extends Observable {
         //Set coordinates to empty
         lGrid[row][col] = EMPTY;
         RemoveBeams(row, col);
-        laserHash.remove(Integer.toString(row) + Integer.toString(col));
+        laserHash.remove(hash(row, col));
         for (String s : laserHash.keySet()) {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
         if (isColumn(row - 1, col)) {
-            pillarHash.get(Integer.toString(row - 1) + Integer.toString(col)).currLasers -= 1;
+            pillarHash.get(hash(row - 1, col)).currLasers -= 1;
         }
         if (isColumn(row + 1, col)) {
-            pillarHash.get(Integer.toString(row + 1) + Integer.toString(col)).currLasers -= 1;
+            pillarHash.get(hash(row + 1, col)).currLasers -= 1;
         }
         if (isColumn(row, col - 1)) {
-            pillarHash.get(Integer.toString(row) + Integer.toString(col - 1)).currLasers -= 1;
+            pillarHash.get(hash(row, col - 1)).currLasers -= 1;
         }
         if (isColumn(row, col + 1)) {
-            pillarHash.get(Integer.toString(row) + Integer.toString(col + 1)).currLasers -= 1;
+            pillarHash.get(hash(row, col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
     }
@@ -145,8 +142,8 @@ public class LasersModel extends Observable {
                     case '2':
                     case '3':
                     case '4':
-                        if (pillarHash.get(Integer.toString(i) + Integer.toString(j)).currLasers !=
-                                pillarHash.get(Integer.toString(i) + Integer.toString(j)).maxLasers) {
+                        if (pillarHash.get(hash(i, j)).currLasers !=
+                                pillarHash.get(hash(i, j)).maxLasers) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             return;
                         }
@@ -205,8 +202,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i++) {
             if (lGrid[i][col] == LASER) {
-                laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
-                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
+                laserHash.get(hash(i, col)).isValid = false;
+                laserHash.get(hash(i, col)).isValid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -216,8 +213,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i--) {
             if (lGrid[i][col] == LASER) {
-                laserHash.get(Integer.toString(i) + Integer.toString(col)).isValid = false;
-                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
+                laserHash.get(hash(i, col)).isValid = false;
+                laserHash.get(hash(row, col)).isValid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -227,8 +224,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j++) {
             if (lGrid[row][j] == LASER) {
-                laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
-                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
+                laserHash.get(hash(row, j)).isValid = false;
+                laserHash.get(hash(row, col)).isValid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -238,8 +235,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j--) {
             if (lGrid[row][j] == LASER) {
-                laserHash.get(Integer.toString(row) + Integer.toString(j)).isValid = false;
-                laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid = false;
+                laserHash.get(hash(row, j)).isValid = false;
+                laserHash.get(hash(row, col)).isValid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -285,7 +282,7 @@ public class LasersModel extends Observable {
      * This is handled when placing lasers and is in the state of the laser itself
      */
     public boolean ValidLaser(int row, int col) {
-        return laserHash.get(Integer.toString(row) + Integer.toString(col)).isValid;
+        return laserHash.get(hash(row, col)).isValid;
     }
 
     /**
@@ -296,6 +293,13 @@ public class LasersModel extends Observable {
             return false;
         }
         return (Character.isDigit(lGrid[row][col]));
+    }
+
+    /**
+     * Makes hash key from the row and column placement in the model
+     */
+    public String hash(int row, int col){
+        return (Integer.toString(row) + Integer.toString(col));
     }
 
     //Overrides

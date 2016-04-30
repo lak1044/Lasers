@@ -17,6 +17,7 @@ import java.util.Collection;
 public class SafeConfig implements Configuration {
 
     public SafeConfig(String filename) {
+
         // TODO
     }
 
