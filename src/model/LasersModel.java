@@ -65,16 +65,16 @@ public class LasersModel extends Observable {
         Laser newLaser = new Laser(row, col);
         laserHash.put(hash(row, col), newLaser);
         AddBeams(row, col);
-        if (isColumn(row - 1, col)) {
+        if (isPillar(row - 1, col)) {
             pillarHash.get(hash(row - 1, col)).currLasers += 1;
         }
-        if (isColumn(row + 1, col)) {
+        if (isPillar(row + 1, col)) {
             pillarHash.get(hash(row + 1, col)).currLasers += 1;
         }
-        if (isColumn(row, col - 1)) {
+        if (isPillar(row, col - 1)) {
             pillarHash.get(hash(row, col - 1)).currLasers += 1;
         }
-        if (isColumn(row, col + 1)) {
+        if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
@@ -99,16 +99,16 @@ public class LasersModel extends Observable {
             laserHash.get(s).isValid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
-        if (isColumn(row - 1, col)) {
+        if (isPillar(row - 1, col)) {
             pillarHash.get(hash(row - 1, col)).currLasers -= 1;
         }
-        if (isColumn(row + 1, col)) {
+        if (isPillar(row + 1, col)) {
             pillarHash.get(hash(row + 1, col)).currLasers -= 1;
         }
-        if (isColumn(row, col - 1)) {
+        if (isPillar(row, col - 1)) {
             pillarHash.get(hash(row, col - 1)).currLasers -= 1;
         }
-        if (isColumn(row, col + 1)) {
+        if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
@@ -180,7 +180,7 @@ public class LasersModel extends Observable {
     //Helper Functions
 
     /**
-     * Checks if the given coordinates are occupied (i.e. not empty)
+     * Checks if the given coordinates are occupied by a beam or pillar
      */
     public boolean isOccupied(int row, int col) {
         return (lGrid[row][col] != EMPTY && lGrid[row][col] != BEAM);
@@ -288,7 +288,7 @@ public class LasersModel extends Observable {
     /**
      * Returns whether or not the coordinates given point to a numerical pillar
      */
-    public boolean isColumn(int row, int col) {
+    public boolean isPillar(int row, int col) {
         if (!validCoordinates(row, col)) {
             return false;
         }
