@@ -29,6 +29,13 @@ public class LasersModel extends Observable {
     //Key is same as laser hash map
     private static HashMap<String, Pillar> pillarHash;
 
+    /**
+     * Creates a new instance of a laserModel
+     * Reads in safe file and creates a local instance of the safe grid
+     * Adds numerical pillars to the pillar hash for future use
+     * @param filename
+     * @throws FileNotFoundException
+     */
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
@@ -289,10 +296,7 @@ public class LasersModel extends Observable {
      * Returns whether or not the coordinates given point to a numerical pillar
      */
     public boolean isPillar(int row, int col) {
-        if (!validCoordinates(row, col)) {
-            return false;
-        }
-        return (Character.isDigit(lGrid[row][col]));
+        return validCoordinates(row, col) && Character.isDigit(lGrid[row][col]);
     }
 
     /**
