@@ -1,6 +1,5 @@
 package ptui;
 
-import model.Laser;
 import model.LasersModel;
 
 import java.io.File;

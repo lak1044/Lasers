@@ -36,8 +36,10 @@ public class LasersPTUI implements Observer {
 
     public LasersModel getModel() { return this.model; }
 
+    //TODO should print statements be held in this class as opposed to the controller?
     @Override
     public void update(Observable o, Object arg) {
+        //Should this simply be a toString?
         // TODO
     }
 }

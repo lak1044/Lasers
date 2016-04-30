@@ -33,8 +33,6 @@ public class LasersModel extends Observable {
      * Creates a new instance of a laserModel
      * Reads in safe file and creates a local instance of the safe grid
      * Adds numerical pillars to the pillar hash for future use
-     * @param filename
-     * @throws FileNotFoundException
      */
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = new Scanner(new File(filename));
