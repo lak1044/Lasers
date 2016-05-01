@@ -101,7 +101,7 @@ public class LasersModel extends Observable {
         RemoveBeams(row, col);
         laserHash.remove(hash(row, col));
         for (String s : laserHash.keySet()) {
-            laserHash.get(s).isValid = true;
+            laserHash.get(s).valid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
         if (isPillar(row - 1, col)) {
@@ -128,7 +128,6 @@ public class LasersModel extends Observable {
      * cardinal directions, it is invalid.
      */
     public void Verify() {
-        //check that there are no empty tiles
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 switch (lGrid[i][j]) {
@@ -170,7 +169,7 @@ public class LasersModel extends Observable {
      */
     public boolean isValid() {
         for (String s : laserHash.keySet()) {
-            if (!laserHash.get(s).isValid) {
+            if (!laserHash.get(s).valid) {
                 return false;
             }
         }
@@ -207,8 +206,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i++) {
             if (lGrid[i][col] == LASER) {
-                laserHash.get(hash(i, col)).isValid = false;
-                laserHash.get(hash(i, col)).isValid = false;
+                laserHash.get(hash(i, col)).valid = false;
+                laserHash.get(hash(i, col)).valid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -218,8 +217,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[i][col]) &&
                 lGrid[i][col] != ANYPILLAR; i--) {
             if (lGrid[i][col] == LASER) {
-                laserHash.get(hash(i, col)).isValid = false;
-                laserHash.get(hash(row, col)).isValid = false;
+                laserHash.get(hash(i, col)).valid = false;
+                laserHash.get(hash(row, col)).valid = false;
                 break;
             }
             lGrid[i][col] = BEAM;
@@ -229,8 +228,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j++) {
             if (lGrid[row][j] == LASER) {
-                laserHash.get(hash(row, j)).isValid = false;
-                laserHash.get(hash(row, col)).isValid = false;
+                laserHash.get(hash(row, j)).valid = false;
+                laserHash.get(hash(row, col)).valid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -240,8 +239,8 @@ public class LasersModel extends Observable {
                 !Character.isDigit(lGrid[row][j]) &&
                 lGrid[row][j] != ANYPILLAR; j--) {
             if (lGrid[row][j] == LASER) {
-                laserHash.get(hash(row, j)).isValid = false;
-                laserHash.get(hash(row, col)).isValid = false;
+                laserHash.get(hash(row, j)).valid = false;
+                laserHash.get(hash(row, col)).valid = false;
                 break;
             }
             lGrid[row][j] = BEAM;
@@ -287,7 +286,7 @@ public class LasersModel extends Observable {
      * This is handled when placing lasers and is in the state of the laser itself
      */
     public boolean ValidLaser(int row, int col) {
-        return laserHash.get(hash(row, col)).isValid;
+        return laserHash.get(hash(row, col)).valid;
     }
 
     /**

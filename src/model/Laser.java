@@ -6,7 +6,7 @@ package model;
 public class Laser {
     int row;
     int col;
-    boolean isValid;
+    boolean valid;
 
     /**
      * Constuct a new laser object
@@ -14,6 +14,8 @@ public class Laser {
     public Laser(int row, int col){
         this.row = row;
         this.col = col;
-        this.isValid = true;
+        this.valid = true;
     }
+
+    public boolean isValid(){ return this.valid; }
 }

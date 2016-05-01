@@ -18,4 +18,8 @@ public class Pillar {
         this.maxLasers = numLasers;
         this.currLasers = 0;
     }
+
+    public int getCurrLasers(){ return this.currLasers; }
+
+    public int getMaxLasers(){ return this.maxLasers; }
 }
