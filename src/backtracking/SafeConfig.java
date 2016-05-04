@@ -49,6 +49,7 @@ public class SafeConfig implements Configuration {
     private int lastCol;
 
     public SafeConfig(String filename) throws FileNotFoundException {
+        //TODO add in checks for lasers when creating grid
 
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
