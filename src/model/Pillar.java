@@ -21,5 +21,6 @@ public class Pillar {
 
     public int getCurrLasers(){ return this.currLasers; }
 
+
     public int getMaxLasers(){ return this.maxLasers; }
 }

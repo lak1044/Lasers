@@ -17,9 +17,9 @@ public class LasersModel extends Observable {
     //Pillar w/any num of lasers
     public static final char ANYPILLAR = 'X';
     //Horizontal dim
-    private static int rows;
+    public static int rows;
     //Vertical dim
-    private static int cols;
+    public static int cols;
     //Grid
     private static char[][] lGrid;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object

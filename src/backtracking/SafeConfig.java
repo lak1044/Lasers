@@ -1,10 +1,12 @@
 package backtracking;
 
+import model.LasersModel;
 import model.Laser;
 import model.Pillar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -36,7 +38,7 @@ public class SafeConfig implements Configuration {
     //Vertical dim
     private static int cols;
     //Grid
-    private static char[][] lGrid;
+    private char[][] lGrid;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
     //Key is (hash(row, col))
     private HashMap<String, Laser> laserHash;
@@ -49,7 +51,6 @@ public class SafeConfig implements Configuration {
     private int lastCol;
 
     public SafeConfig(String filename) throws FileNotFoundException {
-        //TODO add in checks for lasers when creating grid
 
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
@@ -70,6 +71,27 @@ public class SafeConfig implements Configuration {
         in.close();
     }
 
+
+    /**
+     * Copy constructor.  Takes a config, other, and makes a full "deep" copy
+     * of its instance data.
+     * @param other the config to copy
+     */
+    public SafeConfig(SafeConfig other){
+        lGrid = new char[rows][cols];
+        laserHash = new HashMap<>();
+        for (String s: other.laserHash.keySet()){
+            laserHash.put(s, other.laserHash.get(s));
+        }
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                lGrid[i][j] = other.lGrid[i][j];
+            }
+        }
+        lastRow = other.lastRow;
+        lastCol = other.lastCol;
+    }
+
     /**
      * Makes hash key from the row and column placement in the model
      */
@@ -79,8 +101,18 @@ public class SafeConfig implements Configuration {
 
     @Override
     public Collection<Configuration> getSuccessors() {
-        // TODO
-        return null;
+        Collection<Configuration> successors = new ArrayList<>();
+        while (lGrid[lastRow][lastCol] != EMPTY){
+            lastCol = (lastCol + 1) % cols;
+            if (lastCol == 0){
+                lastRow = (lastRow + 1) % rows;
+            }
+        }
+        SafeConfig laserSafe = new SafeConfig(this);
+        laserSafe.lGrid[lastRow][lastCol] = LASER;
+        successors.add(laserSafe);
+        successors.add(this);
+        return successors;
     }
 
     @Override
@@ -110,7 +142,38 @@ public class SafeConfig implements Configuration {
                 }
             }
         }
-        // TODO
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String result = "  ";
+        for (int i = 0; i < cols; i++) {
+            if (i == cols - 1) {
+                result += i % 10 + "\n  ";
+                continue;
+            }
+            result += i % 10 + " ";
+        }
+
+        for (int i = 0; i < cols * 2 - 1; i++) {
+            result += "-";
+        }
+        result += "\n";
+
+        for (int i = 0; i < rows; i++) {
+            result += i % 10 + "|";
+            for (int j = 0; j < cols; j++) {
+                if (j == cols - 1 && i == rows - 1) {
+                    result += lGrid[i][j];
+                    continue;
+                } else if (j == cols - 1) {
+                    result += lGrid[i][j] + "\n";
+                    continue;
+                }
+                result += lGrid[i][j] + " ";
+            }
+        }
+        return result;
     }
 }
