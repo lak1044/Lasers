@@ -132,18 +132,20 @@ public class SafeConfig implements Configuration {
                 lastRow = (lastRow + 1) % rows;
             }
         }
-        laserSafe.lastCol = (laserSafe.lastCol + 1) % cols;
-        if (laserSafe.lastCol == 0){
-            laserSafe.lastRow = (laserSafe.lastRow + 1) % rows;
-        }
-        while (laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] != EMPTY){
+        if (laserSafe.isValid()) {
             laserSafe.lastCol = (laserSafe.lastCol + 1) % cols;
-            if (laserSafe.lastCol == 0){
+            if (laserSafe.lastCol == 0) {
                 laserSafe.lastRow = (laserSafe.lastRow + 1) % rows;
             }
+            while (laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] != EMPTY) {
+                laserSafe.lastCol = (laserSafe.lastCol + 1) % cols;
+                if (laserSafe.lastCol == 0) {
+                    laserSafe.lastRow = (laserSafe.lastRow + 1) % rows;
+                }
+            }
+            successors.add(laserSafe);
         }
         successors.add(this);
-        successors.add(laserSafe);
         return successors;
     }
 
