@@ -102,6 +102,10 @@ public class SafeConfig implements Configuration {
     @Override
     public Collection<Configuration> getSuccessors() {
         Collection<Configuration> successors = new ArrayList<>();
+        lastCol = (lastCol + 1) % cols;
+        if (lastCol == 0){
+            lastRow = (lastRow + 1) % rows;
+        }
         while (lGrid[lastRow][lastCol] != EMPTY){
             lastCol = (lastCol + 1) % cols;
             if (lastCol == 0){
@@ -109,10 +113,92 @@ public class SafeConfig implements Configuration {
             }
         }
         SafeConfig laserSafe = new SafeConfig(this);
-        laserSafe.lGrid[lastRow][lastCol] = LASER;
+        laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] = LASER;
+        laserSafe.laserHash.put(hash(laserSafe.lastRow, laserSafe.lastCol), new Laser(laserSafe.lastRow, laserSafe.lastCol));
+        AddBeams(laserSafe.lastRow, laserSafe.lastCol, laserSafe);
+        if (isPillar(laserSafe.lastRow - 1, laserSafe.lastCol)) {
+            pillarHash.get(hash(laserSafe.lastRow - 1, laserSafe.lastCol)).
+                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow - 1, laserSafe.lastCol)).getCurrLasers() + 1);
+        }
+        if (isPillar(laserSafe.lastRow + 1, laserSafe.lastCol)) {
+            pillarHash.get(hash(laserSafe.lastRow + 1, laserSafe.lastCol)).
+                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow + 1, laserSafe.lastCol)).getCurrLasers() + 1);
+        }
+        if (isPillar(laserSafe.lastRow, laserSafe.lastCol - 1)) {
+            pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol - 1)).
+                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol - 1)).getCurrLasers() + 1);
+        }
+        if (isPillar(laserSafe.lastRow, laserSafe.lastCol + 1)) {
+            pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).
+                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).getCurrLasers() + 1);
+        }
         successors.add(laserSafe);
         successors.add(this);
         return successors;
+    }
+
+    /**
+     * Extends beams from given laser coordinate
+     */
+    public void AddBeams(int row, int col, SafeConfig safe) {
+        //Extend beam down
+        for (int i = row + 1; validCoordinates(i, col) &&
+                !Character.isDigit(safe.lGrid[i][col]) &&
+                safe.lGrid[i][col] != ANYPILLAR; i++) {
+            if (safe.lGrid[i][col] == LASER) {
+                safe.laserHash.get(hash(i, col)).setValid(false);
+                safe.laserHash.get(hash(i, col)).setValid(false);
+                break;
+            }
+            safe.lGrid[i][col] = BEAM;
+        }
+        //Extend the beam up
+        for (int i = row - 1; validCoordinates(i, col) &&
+                !Character.isDigit(safe.lGrid[i][col]) &&
+                safe.lGrid[i][col] != ANYPILLAR; i--) {
+            if (safe.lGrid[i][col] == LASER) {
+                safe.laserHash.get(hash(i, col)).setValid(false);
+                safe.laserHash.get(hash(row, col)).setValid(false);
+                break;
+            }
+            safe.lGrid[i][col] = BEAM;
+        }
+        //Extend the beam right
+        for (int j = col + 1; validCoordinates(row, j) &&
+                !Character.isDigit(safe.lGrid[row][j]) &&
+                safe.lGrid[row][j] != ANYPILLAR; j++) {
+            if (safe.lGrid[row][j] == LASER) {
+                safe.laserHash.get(hash(row, j)).setValid(false);
+                safe.laserHash.get(hash(row, col)).setValid(false);
+                break;
+            }
+            safe.lGrid[row][j] = BEAM;
+        }
+        //extend the beam left
+        for (int j = col - 1; validCoordinates(row, j) &&
+                !Character.isDigit(lGrid[row][j]) &&
+                safe.lGrid[row][j] != ANYPILLAR; j--) {
+            if (safe.lGrid[row][j] == LASER) {
+                safe.laserHash.get(hash(row, j)).setValid(false);
+                safe.laserHash.get(hash(row, col)).setValid(false);
+                break;
+            }
+            safe.lGrid[row][j] = BEAM;
+        }
+    }
+
+    /**
+     * Checks if the given coordinates are within the grid
+     */
+    public boolean validCoordinates(int row, int col) {
+        return ((row >= 0) && (row < rows) && (col >= 0) && (col < cols));
+    }
+
+    /**
+     * Returns whether or not the coordinates given point to a numerical pillar
+     */
+    public boolean isPillar(int row, int col) {
+        return validCoordinates(row, col) && Character.isDigit(lGrid[row][col]);
     }
 
     @Override

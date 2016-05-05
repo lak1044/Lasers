@@ -18,4 +18,6 @@ public class Laser {
     }
 
     public boolean isValid(){ return this.valid; }
+
+    public void setValid(boolean valid){ this.valid = valid; }
 }

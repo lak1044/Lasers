@@ -173,24 +173,6 @@ public class LasersModel extends Observable {
         System.out.println("Safe is fully verified!");
     }
 
-    /**
-     * Checks whether or not the current state of the model is valid or not
-     * Does not worry about being the goal
-     */
-    public boolean isValid() {
-        for (String s : laserHash.keySet()) {
-            if (!laserHash.get(s).valid) {
-                return false;
-            }
-        }
-        for (String s : pillarHash.keySet()) {
-            if (pillarHash.get(s).currLasers > pillarHash.get(s).maxLasers) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     //Helper Functions
 
     /**
