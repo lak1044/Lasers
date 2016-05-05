@@ -1,7 +1,9 @@
 package model;
 
+import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
@@ -21,7 +23,9 @@ public class LasersModel extends Observable {
     //Vertical dim
     private static int cols;
     //Grid
-    private static char[][] lGrid;
+    private char[][] lGrid;
+    //Grid as an ArrayList
+    private ArrayList[][] lGridAry;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
     //Key is (Integer.toString(row) + Integer.toString(col))
     private HashMap<String, Laser> laserHash;
@@ -40,9 +44,15 @@ public class LasersModel extends Observable {
         pillarHash = new HashMap<>();
         //Filling the grid
         lGrid = new char[rows][cols];
+        //lGridAry = new ArrayList[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                lGrid[i][j] = in.next().charAt(0);
+                char gridChar = in.next().charAt(0);
+                lGrid[i][j] = gridChar;
+//                if (Character.isDigit(gridChar)){
+//                    lGridAry[i][j] = new ArrayList<Pillar>();
+//                    lGridAry[i][j].add(new Pillar(i, j, Character.getNumericValue(gridChar)));
+//                }
                 if (Character.isDigit(lGrid[i][j])) {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                     pillarHash.put(newPillar.hash, newPillar);

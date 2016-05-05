@@ -25,4 +25,9 @@ public class Pillar {
         this.hash = "" + Integer.toString(this.row) + "" + Integer.toString(this.col);
     }
 
+    @Override
+    public String toString(){
+        return Integer.toString(this.maxLasers);
+    }
+
 }

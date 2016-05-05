@@ -1,6 +1,5 @@
 package model;
 
-import java.util.IntSummaryStatistics;
 
 /**
  * Created by lak1044 on 4/12/2016.
@@ -23,5 +22,10 @@ public class Laser {
 
     private void createHash(){
         this.hash = "" + Integer.toString(this.row) + "" + Integer.toString(this.col);
+    }
+
+    @Override
+    public String toString(){
+        return "L";
     }
 }
