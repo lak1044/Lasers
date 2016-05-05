@@ -1,14 +1,12 @@
 package model;
 
-
 /**
  * Created by lak1044 on 4/12/2016.
  */
 public class Laser {
     int row;
     int col;
-    String hash;
-    boolean isValid;
+    boolean valid;
 
     /**
      * Constuct a new laser object
@@ -16,16 +14,8 @@ public class Laser {
     public Laser(int row, int col){
         this.row = row;
         this.col = col;
-        this.isValid = true;
-        createHash();
+        this.valid = true;
     }
 
-    private void createHash(){
-        this.hash = "" + Integer.toString(this.row) + "" + Integer.toString(this.col);
-    }
-
-    @Override
-    public String toString(){
-        return "L";
-    }
+    public boolean isValid(){ return this.valid; }
 }

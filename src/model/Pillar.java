@@ -8,7 +8,6 @@ public class Pillar {
     int col;
     int maxLasers;
     int currLasers;
-    String hash;
 
     /**
      * Construct a new Pillar object
@@ -18,16 +17,10 @@ public class Pillar {
         this.col = col;
         this.maxLasers = numLasers;
         this.currLasers = 0;
-        createHash();
     }
 
-    private void createHash(){
-        this.hash = "" + Integer.toString(this.row) + "" + Integer.toString(this.col);
-    }
+    public int getCurrLasers(){ return this.currLasers; }
 
-    @Override
-    public String toString(){
-        return Integer.toString(this.maxLasers);
-    }
 
+    public int getMaxLasers(){ return this.maxLasers; }
 }
