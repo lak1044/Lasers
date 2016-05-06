@@ -40,6 +40,9 @@ public class LasersGUI extends Application implements Observer {
     /** state of buttons in array for update() */
     private Button[][] buttonArray;
 
+    /** state used for restart method */
+    private String FILENAME;
+
 
     @Override
     public void init() throws Exception {
@@ -232,7 +235,7 @@ public class LasersGUI extends Application implements Observer {
         Button solveButton = new Button("Solve");
         //solveButton.setOnAction(event -> FIND METHOD);
         Button restartButton = new Button("Restart");
-        //restartButton.setOnAction(event -> model.restart);
+        restartButton.setOnAction(event -> model.Restart());
         Button loadButton = new Button("Load");
         //loadButton.setOnAction(event -> FIND METHOD);
 
@@ -277,6 +280,7 @@ public class LasersGUI extends Application implements Observer {
         primaryStage.setTitle("Lasers");
         primaryStage.show();
     }
+
 
     @Override
     public void update(Observable o, Object arg) {
