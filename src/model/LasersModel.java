@@ -32,6 +32,7 @@ public class LasersModel extends Observable {
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
     private static HashMap<String, Pillar> pillarHash;
+    public String fileName;
 
     /**
      * Creates a new instance of a laserModel
@@ -39,6 +40,7 @@ public class LasersModel extends Observable {
      * Adds numerical pillars to the pillar hash for future use
      */
     public LasersModel(String filename) throws FileNotFoundException {
+        fileName=filename;
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -338,4 +340,12 @@ public class LasersModel extends Observable {
         setChanged();
         notifyObservers();
     }
+
+    /**
+     * A getter method to facilitate construction of GUI
+     */
+    public char GetVal(int row, int col){return lGrid[row][col];}
+
+
+
 }
