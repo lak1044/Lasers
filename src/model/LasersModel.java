@@ -33,6 +33,8 @@ public class LasersModel extends Observable {
     //Key is same as laser hash map
     private static HashMap<String, Pillar> pillarHash;
     public String fileName;
+    // invalid coordinates for Verify(); int[0] = row; int[1] = col
+    public int[] invalidCoordinates = new int[2];
 
     /**
      * Creates a new instance of a laserModel
@@ -41,6 +43,8 @@ public class LasersModel extends Observable {
      */
     public LasersModel(String filename) throws FileNotFoundException {
         fileName=filename;
+        invalidCoordinates[0]=-1;
+        invalidCoordinates[1]=-1;
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -152,7 +156,10 @@ public class LasersModel extends Observable {
                     case LASER:
                         if (!ValidLaser(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
-                            return;
+                            invalidCoordinates[0]=i;
+                            invalidCoordinates[1]=j;
+                            announceChange();
+                            return;// invalidCoordinates;
                         }
                         break;
                     case '0':
@@ -163,20 +170,29 @@ public class LasersModel extends Observable {
                         if (pillarHash.get(hash(i, j)).currLasers !=
                                 pillarHash.get(hash(i, j)).maxLasers) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
-                            return;
+                            invalidCoordinates[0]=i;
+                            invalidCoordinates[1]=j;
+                            announceChange();
+                            return;// invalidCoordinates;
                         }
                         break;
                     //Must be empty if failed all other cases
                     default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                        invalidCoordinates[0]=i;
+                        invalidCoordinates[1]=j;
                         announceChange();
-                        return;
+                        return;// invalidCoordinates;
 
                 }
             }
         }
         System.out.println("Safe is fully verified!");
+
+        invalidCoordinates[0]=-1;
+        invalidCoordinates[1]=-1;
         announceChange();
+        return;// invalidCoordinates;
     }
 
     //Helper Functions
