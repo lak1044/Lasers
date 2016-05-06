@@ -103,6 +103,7 @@ public class SafeConfig implements Configuration {
     public Collection<Configuration> getSuccessors() {
         Collection<Configuration> successors = new ArrayList<>();
         SafeConfig laserSafe = new SafeConfig(this);
+        SafeConfig emptySafe = new SafeConfig(this);
         laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] = LASER;
         laserSafe.laserHash.put(hash(laserSafe.lastRow, laserSafe.lastCol), new Laser(laserSafe.lastRow, laserSafe.lastCol));
         AddBeams(laserSafe.lastRow, laserSafe.lastCol, laserSafe);
@@ -122,14 +123,14 @@ public class SafeConfig implements Configuration {
             pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).
                     setCurrLasers(pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).getCurrLasers() + 1);
         }
-        lastCol = (lastCol + 1) % cols;
-        if (lastCol == 0){
-            lastRow = (lastRow + 1) % rows;
+        emptySafe.lastCol = (emptySafe.lastCol + 1) % cols;
+        if (emptySafe.lastCol == 0){
+            emptySafe.lastRow = (emptySafe.lastRow + 1) % rows;
         }
-        while (lGrid[lastRow][lastCol] != EMPTY){
-            lastCol = (lastCol + 1) % cols;
-            if (lastCol == 0){
-                lastRow = (lastRow + 1) % rows;
+        while (emptySafe.lGrid[emptySafe.lastRow][emptySafe.lastCol] != EMPTY){
+            emptySafe.lastCol = (lastCol + 1) % cols;
+            if (emptySafe.lastCol == 0){
+                emptySafe.lastRow = (emptySafe.lastRow + 1) % rows;
             }
         }
         if (laserSafe.isValid()) {
