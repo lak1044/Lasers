@@ -43,6 +43,8 @@ public class LasersGUI extends Application implements Observer {
     /** state used for restart method */
     private String FILENAME;
 
+    private int[] invalidCoordinates = new int[2];
+
 
     @Override
     public void init() throws Exception {
@@ -229,7 +231,9 @@ public class LasersGUI extends Application implements Observer {
     private HBox constructCommandButtons (){
         HBox commandBox = new HBox();
         Button checkButton = new Button("Check");
-        checkButton.setOnAction(event -> model.Verify());
+        invalidCoordinates[0]=-1;
+        invalidCoordinates[1]=-1;
+        checkButton.setOnAction(event -> model.Verify());// invalidCoordinates = model.invalidCoordinates);
         Button hintButton = new Button("Hint");
         //hintButton.setOnAction(event -> model.FINDMETHOD);
         Button solveButton = new Button("Solve");
@@ -281,7 +285,6 @@ public class LasersGUI extends Application implements Observer {
         primaryStage.show();
     }
 
-
     @Override
     public void update(Observable o, Object arg) {
         // TODO
@@ -331,10 +334,33 @@ public class LasersGUI extends Application implements Observer {
                     //buttonGrid.add(currButton, j, i);
                     //currButton = newButton;
                 }
-
+                else{
+                    //Button newButton = new Button();
+                    //Image pillarXImg = new Image(getClass().getResourceAsStream("resources/pillarX.png"));
+                    //ImageView pillarXIcon = new ImageView(pillarXImg);
+                    //newButton.setGraphic(pillarXIcon);
+                    //setButtonBackground(newButton, "white.png");
+                    //buttonGrid.add(newButton, j, i);
+                    //buttonArray[i][j]=newButton;
+                    setButtonBackground(currButton,"white.png");
+                }
             }
         }
 
+
+        //Check for invalid positions.
+        invalidCoordinates = model.invalidCoordinates;
+        if (invalidCoordinates[0]>=0 || invalidCoordinates[1]>=0){
+            Button currButton = buttonArray[invalidCoordinates[0]][invalidCoordinates[1]];
+            if (model.GetVal(invalidCoordinates[0],invalidCoordinates[1])=='.'){
+                Image redImg = new Image(getClass().getResourceAsStream("resources/red.png"));
+                ImageView redIcon = new ImageView(redImg);
+                currButton.setGraphic(redIcon);
+            }
+            setButtonBackground(currButton,"red.png");
+        }
+        invalidCoordinates[0]=-1;
+        invalidCoordinates[1]=-1;
 
 
 
