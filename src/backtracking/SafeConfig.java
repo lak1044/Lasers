@@ -119,6 +119,11 @@ public class SafeConfig implements Configuration {
         return successors;
     }
 
+    /**
+     * Increments the lastRow and lastCol states w/wrapping ability
+     * WILL NOT INCREMENT PAST LAST POSSIBLE POSITION
+     * @param safe
+     */
     public void incrementPos(SafeConfig safe){
         safe.lastCol = (safe.lastCol + 1) % cols;
         if (safe.lastCol == 0) {
@@ -189,14 +194,23 @@ public class SafeConfig implements Configuration {
     }
 
     /**
-     * Returns whether or not the coordinates given point to a numerical pillar
+     * returns whether or not the current grid has empty spaces in it
+     * @return
      */
-    public boolean isPillar(int row, int col) {
-        return validCoordinates(row, col) && Character.isDigit(lGrid[row][col]);
+    public boolean hasEmptySpaces(){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                switch (lGrid[i][j]) {
+                    case EMPTY:
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
-     * Checks adjacent positions
+     * Updates everypillars current laser amount
      * @param safe
      */
     public void updatePillars(SafeConfig safe){
@@ -235,6 +249,11 @@ public class SafeConfig implements Configuration {
     @Override
     public boolean isValid() {
         updatePillars(this);
+        if (this.lastRow == rows - 1 && this.lastCol == cols - 1){
+            if (hasEmptySpaces()){
+                return false;
+            }
+        }
         for (String s : this.laserHash.keySet()) {
             if (!this.laserHash.get(s).isValid()) {
                 return false;
@@ -250,19 +269,7 @@ public class SafeConfig implements Configuration {
 
     @Override
     public boolean isGoal() {
-        if (!isValid()) {
-            return false;
-        }
-        //Check to make sure that there are no empty spaces
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                switch (lGrid[i][j]) {
-                    case EMPTY:
-                        return false;
-                }
-            }
-        }
-        return false;
+        return (isValid() && !hasEmptySpaces());
     }
 
     @Override
