@@ -107,6 +107,9 @@ public class SafeConfig implements Configuration {
     @Override
     public Collection<Configuration> getSuccessors() {
         Collection<Configuration> successors = new ArrayList<>();
+        if (lastRow == -1 && lastCol == -1){
+            return successors;
+        }
         SafeConfig lSafe = new SafeConfig(this);
         SafeConfig eSafe = new SafeConfig(this);
         lSafe.lGrid[lSafe.lastRow][lSafe.lastCol] = LASER;
@@ -125,12 +128,23 @@ public class SafeConfig implements Configuration {
      * @param safe
      */
     public void incrementPos(SafeConfig safe){
+        if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
+            safe.lastRow = -1;
+            safe.lastCol = -1;
+            return;
+        }
         safe.lastCol = (safe.lastCol + 1) % cols;
+        if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
+            return;
+        }
         if (safe.lastCol == 0) {
             safe.lastRow = (safe.lastRow + 1) % rows;
         }
         while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY) {
             safe.lastCol = (safe.lastCol + 1) % cols;
+            if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
+                return;
+            }
             if (safe.lastCol == 0) {
                 safe.lastRow = (safe.lastRow + 1) % rows;
             }
@@ -249,11 +263,6 @@ public class SafeConfig implements Configuration {
     @Override
     public boolean isValid() {
         updatePillars(this);
-        if (this.lastRow == rows - 1 && this.lastCol == cols - 1){
-            if (hasEmptySpaces()){
-                return false;
-            }
-        }
         for (String s : this.laserHash.keySet()) {
             if (!this.laserHash.get(s).isValid()) {
                 return false;
