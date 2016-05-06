@@ -15,7 +15,7 @@ import java.util.Scanner;
  * The class represents a single configuration of a safe.  It is
  * used by the backtracker to generate successors, check for
  * validity, and eventually find the goal.
- *
+ * <p>
  * This class is given to you here, but it will undoubtedly need to
  * communicate with the model.  You are free to move it into the model
  * package and/or incorporate it into another class.
@@ -44,7 +44,7 @@ public class SafeConfig implements Configuration {
     private HashMap<String, Laser> laserHash;
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
-    private static HashMap<String, Pillar> pillarHash;
+    private HashMap<String, Pillar> pillarHash;
     //position of row
     private int lastRow;
     //position of column
@@ -75,13 +75,18 @@ public class SafeConfig implements Configuration {
     /**
      * Copy constructor.  Takes a config, other, and makes a full "deep" copy
      * of its instance data.
+     *
      * @param other the config to copy
      */
-    public SafeConfig(SafeConfig other){
+    public SafeConfig(SafeConfig other) {
         lGrid = new char[rows][cols];
         laserHash = new HashMap<>();
-        for (String s: other.laserHash.keySet()){
+        pillarHash = new HashMap<>();
+        for (String s : other.laserHash.keySet()) {
             laserHash.put(s, other.laserHash.get(s));
+        }
+        for (String s : other.pillarHash.keySet()) {
+            pillarHash.put(s, other.pillarHash.get(s));
         }
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -95,108 +100,84 @@ public class SafeConfig implements Configuration {
     /**
      * Makes hash key from the row and column placement in the model
      */
-    public String hash(int row, int col){
+    public String hash(int row, int col) {
         return (Integer.toString(row) + Integer.toString(col));
     }
 
     @Override
     public Collection<Configuration> getSuccessors() {
         Collection<Configuration> successors = new ArrayList<>();
-        SafeConfig laserSafe = new SafeConfig(this);
-        SafeConfig emptySafe = new SafeConfig(this);
-        laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] = LASER;
-        laserSafe.laserHash.put(hash(laserSafe.lastRow, laserSafe.lastCol), new Laser(laserSafe.lastRow, laserSafe.lastCol));
-        AddBeams(laserSafe.lastRow, laserSafe.lastCol, laserSafe);
-        if (isPillar(laserSafe.lastRow - 1, laserSafe.lastCol)) {
-            pillarHash.get(hash(laserSafe.lastRow - 1, laserSafe.lastCol)).
-                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow - 1, laserSafe.lastCol)).getCurrLasers() + 1);
-        }
-        if (isPillar(laserSafe.lastRow + 1, laserSafe.lastCol)) {
-            pillarHash.get(hash(laserSafe.lastRow + 1, laserSafe.lastCol)).
-                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow + 1, laserSafe.lastCol)).getCurrLasers() + 1);
-        }
-        if (isPillar(laserSafe.lastRow, laserSafe.lastCol - 1)) {
-            pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol - 1)).
-                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol - 1)).getCurrLasers() + 1);
-        }
-        if (isPillar(laserSafe.lastRow, laserSafe.lastCol + 1)) {
-            pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).
-                    setCurrLasers(pillarHash.get(hash(laserSafe.lastRow, laserSafe.lastCol + 1)).getCurrLasers() + 1);
-        }
-        emptySafe.lastCol = (emptySafe.lastCol + 1) % cols;
-        if (emptySafe.lastCol == 0){
-            emptySafe.lastRow = (emptySafe.lastRow + 1) % rows;
-        }
-        while (emptySafe.lGrid[emptySafe.lastRow][emptySafe.lastCol] != EMPTY){
-            emptySafe.lastCol = (lastCol + 1) % cols;
-            if (emptySafe.lastCol == 0){
-                emptySafe.lastRow = (emptySafe.lastRow + 1) % rows;
-            }
-        }
-        if (laserSafe.isValid()) {
-            laserSafe.lastCol = (laserSafe.lastCol + 1) % cols;
-            if (laserSafe.lastCol == 0) {
-                laserSafe.lastRow = (laserSafe.lastRow + 1) % rows;
-            }
-            while (laserSafe.lGrid[laserSafe.lastRow][laserSafe.lastCol] != EMPTY) {
-                laserSafe.lastCol = (laserSafe.lastCol + 1) % cols;
-                if (laserSafe.lastCol == 0) {
-                    laserSafe.lastRow = (laserSafe.lastRow + 1) % rows;
-                }
-            }
-            successors.add(laserSafe);
-        }
-        successors.add(this);
+        SafeConfig lSafe = new SafeConfig(this);
+        SafeConfig eSafe = new SafeConfig(this);
+        lSafe.lGrid[lSafe.lastRow][lSafe.lastCol] = LASER;
+        lSafe.laserHash.put(hash(lSafe.lastRow, lSafe.lastCol), new Laser(lSafe.lastRow, lSafe.lastCol));
+        AddBeams(lSafe);
+        incrementPos(lSafe);
+        incrementPos(eSafe);
+        successors.add(lSafe);
+        successors.add(eSafe);
         return successors;
     }
 
+    public void incrementPos(SafeConfig safe){
+        safe.lastCol = (safe.lastCol + 1) % cols;
+        if (safe.lastCol == 0) {
+            safe.lastRow = (safe.lastRow + 1) % rows;
+        }
+        while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY) {
+            safe.lastCol = (safe.lastCol + 1) % cols;
+            if (safe.lastCol == 0) {
+                safe.lastRow = (safe.lastRow + 1) % rows;
+            }
+        }
+    }
     /**
      * Extends beams from given laser coordinate
      */
-    public void AddBeams(int row, int col, SafeConfig safe) {
+    public void AddBeams(SafeConfig safe) {
         //Extend beam down
-        for (int i = row + 1; validCoordinates(i, col) &&
-                !Character.isDigit(safe.lGrid[i][col]) &&
-                safe.lGrid[i][col] != ANYPILLAR; i++) {
-            if (safe.lGrid[i][col] == LASER) {
-                safe.laserHash.get(hash(i, col)).setValid(false);
-                safe.laserHash.get(hash(i, col)).setValid(false);
+        for (int i = safe.lastRow + 1; validCoordinates(i, safe.lastCol) &&
+                !Character.isDigit(safe.lGrid[i][safe.lastCol]) &&
+                safe.lGrid[i][safe.lastCol] != ANYPILLAR; i++) {
+            if (safe.lGrid[i][safe.lastCol] == LASER) {
+                safe.laserHash.get(hash(i, safe.lastCol)).setValid(false);
+                safe.laserHash.get(hash(safe.lastRow, safe.lastCol)).setValid(false);
                 break;
             }
-            safe.lGrid[i][col] = BEAM;
+            safe.lGrid[i][safe.lastCol] = BEAM;
         }
         //Extend the beam up
-        for (int i = row - 1; validCoordinates(i, col) &&
-                !Character.isDigit(safe.lGrid[i][col]) &&
-                safe.lGrid[i][col] != ANYPILLAR; i--) {
-            if (safe.lGrid[i][col] == LASER) {
-                safe.laserHash.get(hash(i, col)).setValid(false);
-                safe.laserHash.get(hash(row, col)).setValid(false);
+        for (int i = safe.lastRow - 1; validCoordinates(i, safe.lastCol) &&
+                !Character.isDigit(safe.lGrid[i][safe.lastCol]) &&
+                safe.lGrid[i][safe.lastCol] != ANYPILLAR; i--) {
+            if (safe.lGrid[i][safe.lastCol] == LASER) {
+                safe.laserHash.get(hash(i, safe.lastCol)).setValid(false);
+                safe.laserHash.get(hash(safe.lastRow, safe.lastCol)).setValid(false);
                 break;
             }
-            safe.lGrid[i][col] = BEAM;
+            safe.lGrid[i][safe.lastCol] = BEAM;
         }
         //Extend the beam right
-        for (int j = col + 1; validCoordinates(row, j) &&
-                !Character.isDigit(safe.lGrid[row][j]) &&
-                safe.lGrid[row][j] != ANYPILLAR; j++) {
-            if (safe.lGrid[row][j] == LASER) {
-                safe.laserHash.get(hash(row, j)).setValid(false);
-                safe.laserHash.get(hash(row, col)).setValid(false);
+        for (int j = safe.lastCol + 1; validCoordinates(safe.lastRow, j) &&
+                !Character.isDigit(safe.lGrid[safe.lastRow][j]) &&
+                safe.lGrid[safe.lastRow][j] != ANYPILLAR; j++) {
+            if (safe.lGrid[safe.lastRow][j] == LASER) {
+                safe.laserHash.get(hash(safe.lastRow, j)).setValid(false);
+                safe.laserHash.get(hash(safe.lastRow, safe.lastCol)).setValid(false);
                 break;
             }
-            safe.lGrid[row][j] = BEAM;
+            safe.lGrid[safe.lastRow][j] = BEAM;
         }
         //extend the beam left
-        for (int j = col - 1; validCoordinates(row, j) &&
-                !Character.isDigit(lGrid[row][j]) &&
-                safe.lGrid[row][j] != ANYPILLAR; j--) {
-            if (safe.lGrid[row][j] == LASER) {
-                safe.laserHash.get(hash(row, j)).setValid(false);
-                safe.laserHash.get(hash(row, col)).setValid(false);
+        for (int j = safe.lastCol - 1; validCoordinates(safe.lastRow, j) &&
+                !Character.isDigit(lGrid[safe.lastRow][j]) &&
+                safe.lGrid[safe.lastRow][j] != ANYPILLAR; j--) {
+            if (safe.lGrid[safe.lastRow][j] == LASER) {
+                safe.laserHash.get(hash(safe.lastRow, j)).setValid(false);
+                safe.laserHash.get(hash(safe.lastRow, safe.lastCol)).setValid(false);
                 break;
             }
-            safe.lGrid[row][j] = BEAM;
+            safe.lGrid[safe.lastRow][j] = BEAM;
         }
     }
 
@@ -214,10 +195,48 @@ public class SafeConfig implements Configuration {
         return validCoordinates(row, col) && Character.isDigit(lGrid[row][col]);
     }
 
+    /**
+     * Checks adjacent positions
+     * @param safe
+     */
+    public void updatePillars(SafeConfig safe){
+        int row;
+        int col;
+        int currLasers;
+        for (String s: safe.pillarHash.keySet()){
+            row = safe.pillarHash.get(s).getRow();
+            col = safe.pillarHash.get(s).getCol();
+            currLasers = 0;
+
+            if (validCoordinates(row - 1, col)){
+                if (safe.lGrid[row - 1][col] == LASER){
+                    currLasers += 1;
+                }
+            }
+            if (validCoordinates(row + 1, col)){
+                if (safe.lGrid[row + 1][col] == LASER){
+                    currLasers += 1;
+                }
+            }
+            if (validCoordinates(row, col - 1)){
+                if (safe.lGrid[row][col - 1] == LASER){
+                    currLasers += 1;
+                }
+            }
+            if (validCoordinates(row, col + 1)){
+                if (safe.lGrid[row][col + 1] == LASER){
+                    currLasers += 1;
+                }
+            }
+            safe.pillarHash.get(s).setCurrLasers(currLasers);
+        }
+    }
+
     @Override
     public boolean isValid() {
-        for (String s : laserHash.keySet()) {
-            if (!laserHash.get(s).isValid()) {
+        updatePillars(this);
+        for (String s : this.laserHash.keySet()) {
+            if (!this.laserHash.get(s).isValid()) {
                 return false;
             }
         }
@@ -231,7 +250,9 @@ public class SafeConfig implements Configuration {
 
     @Override
     public boolean isGoal() {
-        if (!isValid()){ return false; }
+        if (!isValid()) {
+            return false;
+        }
         //Check to make sure that there are no empty spaces
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
