@@ -37,6 +37,12 @@ public class LasersGUI extends Application implements Observer {
     /** state of buttons for update() */
     private GridPane buttonGrid;
 
+    /** state of buttons in array for update() */
+    private Button[][] buttonArray;
+
+    /** state used for restart method */
+    private String FILENAME;
+
 
     @Override
     public void init() throws Exception {
@@ -103,11 +109,11 @@ public class LasersGUI extends Application implements Observer {
 
     private GridPane constructSafeGrid(){
         buttonGrid = new GridPane();
+        buttonArray = new Button[model.rows][model.cols];
         for (int i=0; i<model.rows; i++) {
             for (int j = 0; j < model.cols; j++) {
 
                 char toCheck = model.GetVal(i,j);
-
 
                 //construct emptyButton
                 if (toCheck == '.'){
@@ -120,6 +126,7 @@ public class LasersGUI extends Application implements Observer {
                     int jcol= j;
                     newButton.setOnAction(event -> model.Add(irow,jcol));
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Laser
                 else if (toCheck == 'L'){
@@ -132,6 +139,7 @@ public class LasersGUI extends Application implements Observer {
                     int jcol= j;
                     newButton.setOnAction(event -> model.Remove(irow,jcol));
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Beam
                 else if (toCheck == '*'){
@@ -141,6 +149,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(beamIcon);
                     setButtonBackground(newButton, "yellow.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct AnyPillar
                 else if (toCheck == 'X'){
@@ -150,6 +159,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillarXIcon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Pillar0
                 else if (toCheck == '0'){
@@ -159,6 +169,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillar0Icon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Pillar1
                 else if (toCheck == '1'){
@@ -168,6 +179,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillar1Icon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Pillar2
                 else if (toCheck == '2'){
@@ -177,6 +189,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillar2Icon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Pillar3
                 else if (toCheck == '3'){
@@ -186,6 +199,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillar3Icon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 //construct Pillar4
                 else if (toCheck == '4'){
@@ -195,6 +209,7 @@ public class LasersGUI extends Application implements Observer {
                     newButton.setGraphic(pillar4Icon);
                     setButtonBackground(newButton, "white.png");
                     buttonGrid.add(newButton, j, i);
+                    buttonArray[i][j]=newButton;
                 }
                 /*
                 Button newButton = new Button();
@@ -220,7 +235,7 @@ public class LasersGUI extends Application implements Observer {
         Button solveButton = new Button("Solve");
         //solveButton.setOnAction(event -> FIND METHOD);
         Button restartButton = new Button("Restart");
-        //restartButton.setOnAction(event -> model.restart);
+        restartButton.setOnAction(event -> model.Restart());
         Button loadButton = new Button("Load");
         //loadButton.setOnAction(event -> FIND METHOD);
 
@@ -266,8 +281,62 @@ public class LasersGUI extends Application implements Observer {
         primaryStage.show();
     }
 
+
     @Override
     public void update(Observable o, Object arg) {
         // TODO
+
+        for (int i=0; i<model.rows; i++) {
+            for (int j = 0; j < model.cols; j++) {
+
+                char toCheck = model.GetVal(i,j);
+                Button currButton = buttonArray[i][j];
+
+                //construct emptyButton
+                if (toCheck == '.'){
+                    //Button newButton = new Button();
+                    Image whiteImg = new Image(getClass().getResourceAsStream("resources/white.png"));
+                    ImageView whiteIcon = new ImageView(whiteImg);
+                    currButton.setGraphic(whiteIcon);
+                    setButtonBackground(currButton, "white.png");
+                    int irow= i;
+                    int jcol= j;
+                    currButton.setOnAction(event -> model.Add(irow,jcol));
+                    //buttonGrid.add(currButton, j, i);
+                    //currButton = newButton;
+                }
+                //construct Laser
+                else if (toCheck == 'L'){
+                    //Button newButton = new Button();
+                    Image laserImg = new Image(getClass().getResourceAsStream("resources/laser.png"));
+                    ImageView laserIcon = new ImageView(laserImg);
+                    currButton.setGraphic(laserIcon);
+                    setButtonBackground(currButton, "yellow.png");
+                    int irow= i;
+                    int jcol= j;
+                    currButton.setOnAction(event -> model.Remove(irow,jcol));
+                    //buttonGrid.add(currButton, j, i);
+                    //currButton = newButton;
+                }
+                //construct Beam
+                else if (toCheck == '*'){
+                    //Button newButton = new Button();
+                    Image beamImg = new Image(getClass().getResourceAsStream("resources/beam.png"));
+                    ImageView beamIcon = new ImageView(beamImg);
+                    currButton.setGraphic(beamIcon);
+                    setButtonBackground(currButton, "yellow.png");
+                    int irow= i;
+                    int jcol= j;
+                    currButton.setOnAction(event -> model.Add(irow,jcol));
+                    //buttonGrid.add(currButton, j, i);
+                    //currButton = newButton;
+                }
+
+            }
+        }
+
+
+
+
     }
 }

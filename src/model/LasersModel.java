@@ -95,6 +95,7 @@ public class LasersModel extends Observable {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
+        announceChange();
     }
 
     /**
@@ -129,6 +130,7 @@ public class LasersModel extends Observable {
             pillarHash.get(hash(row, col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
+        announceChange();
     }
 
     /**
@@ -167,12 +169,14 @@ public class LasersModel extends Observable {
                     //Must be empty if failed all other cases
                     default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                        announceChange();
                         return;
 
                 }
             }
         }
         System.out.println("Safe is fully verified!");
+        announceChange();
     }
 
     //Helper Functions
@@ -346,6 +350,41 @@ public class LasersModel extends Observable {
      */
     public char GetVal(int row, int col){return lGrid[row][col];}
 
+
+
+    /**
+     * Restart method clears the board by recreating the initial model to an empty safe grid
+     */
+    public void Restart(){
+        try {
+            String filename = fileName;
+            Scanner in = new Scanner(new File(filename));
+            rows = Integer.parseInt(in.next());
+            cols = Integer.parseInt(in.next());
+            laserHash = new HashMap<>();
+            pillarHash = new HashMap<>();
+            //Filling the grid
+            lGrid = new char[rows][cols];
+            //lGridAry = new ArrayList[rows][cols];
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    char gridChar = in.next().charAt(0);
+                    lGrid[i][j] = gridChar;
+//                if (Character.isDigit(gridChar)){
+//                    lGridAry[i][j] = new ArrayList<Pillar>();
+//                    lGridAry[i][j].add(new Pillar(i, j, Character.getNumericValue(gridChar)));
+//                }
+                    if (Character.isDigit(lGrid[i][j])) {
+                        Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
+                        pillarHash.put(hash(i, j), newPillar);
+                    }
+                }
+            }
+            in.close();
+            announceChange();
+        }
+        catch (FileNotFoundException e){}
+    }
 
 
 }
