@@ -19,6 +19,10 @@ public class Pillar {
         this.currLasers = 0;
     }
 
+    public int getRow(){ return this.row; }
+
+    public int getCol(){ return this.col; }
+
     public int getCurrLasers(){ return this.currLasers; }
 
     public void setCurrLasers(int currLasers){ this.currLasers = currLasers; }
