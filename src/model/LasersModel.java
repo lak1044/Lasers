@@ -352,4 +352,39 @@ public class LasersModel extends Observable {
 
 
 
+    /**
+     * Restart method clears the board by recreating the initial model to an empty safe grid
+     */
+    public void Restart(){
+        try {
+            String filename = fileName;
+            Scanner in = new Scanner(new File(filename));
+            rows = Integer.parseInt(in.next());
+            cols = Integer.parseInt(in.next());
+            laserHash = new HashMap<>();
+            pillarHash = new HashMap<>();
+            //Filling the grid
+            lGrid = new char[rows][cols];
+            //lGridAry = new ArrayList[rows][cols];
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    char gridChar = in.next().charAt(0);
+                    lGrid[i][j] = gridChar;
+//                if (Character.isDigit(gridChar)){
+//                    lGridAry[i][j] = new ArrayList<Pillar>();
+//                    lGridAry[i][j].add(new Pillar(i, j, Character.getNumericValue(gridChar)));
+//                }
+                    if (Character.isDigit(lGrid[i][j])) {
+                        Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
+                        pillarHash.put(hash(i, j), newPillar);
+                    }
+                }
+            }
+            in.close();
+            announceChange();
+        }
+        catch (FileNotFoundException e){}
+    }
+
+
 }
