@@ -95,6 +95,7 @@ public class LasersModel extends Observable {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
         System.out.printf("Laser added at: (%d, %d)\n", row, col);
+        announceChange();
     }
 
     /**
@@ -129,6 +130,7 @@ public class LasersModel extends Observable {
             pillarHash.get(hash(row, col + 1)).currLasers -= 1;
         }
         System.out.printf("Laser removed at: (%d, %d)\n", row, col);
+        announceChange();
     }
 
     /**
@@ -167,12 +169,14 @@ public class LasersModel extends Observable {
                     //Must be empty if failed all other cases
                     default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
+                        announceChange();
                         return;
 
                 }
             }
         }
         System.out.println("Safe is fully verified!");
+        announceChange();
     }
 
     //Helper Functions
