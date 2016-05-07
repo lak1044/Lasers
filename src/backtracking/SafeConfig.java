@@ -283,11 +283,17 @@ public class SafeConfig implements Configuration {
             }
         }
         for (String s : pillarHash.keySet()) {
-            if (pillarHash.get(s).getCurrLasers() > pillarHash.get(s).getMaxLasers()) {
-                return false;
+            if (lastRow - 1 > pillarHash.get(s).getRow() && lastCol > pillarHash.get(s).getCol()){
+                if (pillarHash.get(s).getCurrLasers() != pillarHash.get(s).getMaxLasers()){
+                    return false;
+                }
             }
-            else if (pillarHash.get(s).getCurrLasers() + pillarHash.get(s).getCurrEmpty() < pillarHash.get(s).getMaxLasers()){
-                return false;
+            else {
+                if (pillarHash.get(s).getCurrLasers() > pillarHash.get(s).getMaxLasers()) {
+                    return false;
+                } else if (pillarHash.get(s).getCurrLasers() + pillarHash.get(s).getCurrEmpty() < pillarHash.get(s).getMaxLasers()) {
+                    return false;
+                }
             }
         }
         return true;
