@@ -1,6 +1,5 @@
 package backtracking;
 
-import model.LasersModel;
 import model.Laser;
 import model.Pillar;
 
@@ -49,6 +48,7 @@ public class SafeConfig implements Configuration {
     private int lastRow;
     //position of column
     private int lastCol;
+
 
     public SafeConfig(String filename) throws FileNotFoundException {
 
@@ -115,17 +115,15 @@ public class SafeConfig implements Configuration {
         lSafe.lGrid[lSafe.lastRow][lSafe.lastCol] = LASER;
         lSafe.laserHash.put(hash(lSafe.lastRow, lSafe.lastCol), new Laser(lSafe.lastRow, lSafe.lastCol));
         AddBeams(lSafe);
-        incrementPos(lSafe);
-        incrementPos(eSafe);
-        successors.add(lSafe);
+            incrementPos(lSafe);
+            incrementPos(eSafe);
+            successors.add(lSafe);
         successors.add(eSafe);
         return successors;
     }
 
     /**
-     * Increments the lastRow and lastCol states w/wrapping ability
-     * WILL NOT INCREMENT PAST LAST POSSIBLE POSITION
-     * @param safe
+     * Increments the lastRow and lastCol states
      */
     public void incrementPos(SafeConfig safe){
         if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
@@ -209,7 +207,6 @@ public class SafeConfig implements Configuration {
 
     /**
      * returns whether or not the current grid has empty spaces in it
-     * @return
      */
     public boolean hasEmptySpaces(){
         for (int i = 0; i < rows; i++) {
@@ -225,7 +222,6 @@ public class SafeConfig implements Configuration {
 
     /**
      * Updates everypillars current laser amount
-     * @param safe
      */
     public void updatePillars(SafeConfig safe){
         int row;
@@ -235,6 +231,9 @@ public class SafeConfig implements Configuration {
         for (String s: safe.pillarHash.keySet()){
             row = safe.pillarHash.get(s).getRow();
             col = safe.pillarHash.get(s).getCol();
+            if (safe.lastRow - 1 > row && safe.lastCol > col){
+                continue;
+            }
             currLasers = 0;
             currEmpty = 0;
 
@@ -307,10 +306,7 @@ public class SafeConfig implements Configuration {
                 return false;
             }
         }
-        if (hasEmptySpaces()){
-            return false;
-        }
-        return true;
+        return !hasEmptySpaces();
     }
 
     @Override

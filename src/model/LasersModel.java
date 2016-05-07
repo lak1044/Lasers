@@ -300,7 +300,7 @@ public class LasersModel extends Observable {
      * This is handled when placing lasers and is in the state of the laser itself
      */
     public boolean ValidLaser(int row, int col) {
-        return laserHash.get(hash(row, col)).valid;
+        return laserHash.get(hash(row, col)).isValid();
     }
 
     /**

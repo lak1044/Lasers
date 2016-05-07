@@ -9,7 +9,7 @@ public class Laser {
     boolean valid;
 
     /**
-     * Constuct a new laser object
+     * Construct a new laser object
      */
     public Laser(int row, int col){
         this.row = row;

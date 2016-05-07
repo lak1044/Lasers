@@ -1,5 +1,7 @@
 package gui;
 
+import backtracking.Backtracker;
+import backtracking.SafeConfig;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,10 +11,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 import model.*;
 
@@ -241,16 +246,12 @@ public class LasersGUI extends Application implements Observer {
         Button restartButton = new Button("Restart");
         restartButton.setOnAction(event -> model.Restart());
         Button loadButton = new Button("Load");
-        //loadButton.setOnAction(event -> FIND METHOD);
+        //loadButton.setOnAction ( event -> load filename)
 
         commandBox.getChildren().addAll(checkButton,hintButton,solveButton,restartButton,loadButton);
 
         return commandBox;
-
     }
-
-
-
 
     /**
      * The
