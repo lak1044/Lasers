@@ -231,32 +231,47 @@ public class SafeConfig implements Configuration {
         int row;
         int col;
         int currLasers;
+        int currEmpty;
         for (String s: safe.pillarHash.keySet()){
             row = safe.pillarHash.get(s).getRow();
             col = safe.pillarHash.get(s).getCol();
             currLasers = 0;
+            currEmpty = 0;
 
             if (validCoordinates(row - 1, col)){
                 if (safe.lGrid[row - 1][col] == LASER){
                     currLasers += 1;
+                }
+                else if (safe.lGrid[row - 1][col] == EMPTY){
+                    currEmpty += 1;
                 }
             }
             if (validCoordinates(row + 1, col)){
                 if (safe.lGrid[row + 1][col] == LASER){
                     currLasers += 1;
                 }
+                else if (safe.lGrid[row + 1][col] == EMPTY){
+                    currEmpty += 1;
+                }
             }
             if (validCoordinates(row, col - 1)){
                 if (safe.lGrid[row][col - 1] == LASER){
                     currLasers += 1;
+                }
+                else if (safe.lGrid[row][col - 1] == EMPTY){
+                    currEmpty += 1;
                 }
             }
             if (validCoordinates(row, col + 1)){
                 if (safe.lGrid[row][col + 1] == LASER){
                     currLasers += 1;
                 }
+                else if (safe.lGrid[row][col + 1] == EMPTY){
+                    currEmpty += 1;
+                }
             }
             safe.pillarHash.get(s).setCurrLasers(currLasers);
+            safe.pillarHash.get(s).setCurrEmpty(currEmpty);
         }
     }
 
@@ -272,13 +287,30 @@ public class SafeConfig implements Configuration {
             if (pillarHash.get(s).getCurrLasers() > pillarHash.get(s).getMaxLasers()) {
                 return false;
             }
+            else if (pillarHash.get(s).getCurrLasers() + pillarHash.get(s).getCurrEmpty() < pillarHash.get(s).getMaxLasers()){
+                return false;
+            }
         }
         return true;
     }
 
     @Override
     public boolean isGoal() {
-        return (isValid() && !hasEmptySpaces());
+        updatePillars(this);
+        for (String s: this.laserHash.keySet()){
+            if (!this.laserHash.get(s).isValid()){
+                return false;
+            }
+        }
+        for (String s: this.pillarHash.keySet()){
+            if (pillarHash.get(s).getCurrLasers() != pillarHash.get(s).getMaxLasers()){
+                return false;
+            }
+        }
+        if (hasEmptySpaces()){
+            return false;
+        }
+        return true;
     }
 
     @Override
