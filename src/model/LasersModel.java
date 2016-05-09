@@ -36,19 +36,33 @@ public class LasersModel extends Observable {
     // invalid coordinates for Verify(); int[0] = row; int[1] = col
     private int[] invalidCoordinates = new int[2];
 
-    /** Returns the invalidCoordinates array */
+    /**
+     * Returns the invalidCoordinates array
+     */
     public int[] getInvalidCoordinates() {
         return this.invalidCoordinates;
     }
 
-    /** Returns the laserHash */
-    public HashMap<String, Laser> getLaserHash() { return this.laserHash; }
+    /**
+     * Returns the laserHash
+     */
+    public HashMap<String, Laser> getLaserHash() {
+        return this.laserHash;
+    }
 
-    /** Returns the pillarHash */
-    public HashMap<String, Pillar> getPillarHash() { return this.pillarHash; }
+    /**
+     * Returns the pillarHash
+     */
+    public HashMap<String, Pillar> getPillarHash() {
+        return this.pillarHash;
+    }
 
-    /** Returns the lGrid */
-    public char[][] getlGrid() { return this.lGrid; }
+    /**
+     * Returns the lGrid
+     */
+    public char[][] getlGrid() {
+        return this.lGrid;
+    }
 
     /**
      * Creates a new instance of a laserModel
@@ -79,31 +93,33 @@ public class LasersModel extends Observable {
         in.close();
     }
 
-    /** Copies the grid state, pillar hashmap, and laser hashmap from a SafeConfig instace.
+    /**
+     * Copies the grid state, pillar hashmap, and laser hashmap from a SafeConfig instace.
      * This is for changing the model to match a solved safe.
+     *
      * @param safe SafeConfig instance to be copied
      */
-    public void copySafconfig(SafeConfig safe){
+    public void copySafconfig(SafeConfig safe) {
         this.laserHash = new HashMap<>();
         this.pillarHash = new HashMap<>();
-        for (String s: safe.getLaserHash().keySet()){
+        for (String s : safe.getLaserHash().keySet()) {
             this.laserHash.put(s, safe.getLaserHash().get(s));
         }
-        for (String s: safe.getPillarHash().keySet()){
+        for (String s : safe.getPillarHash().keySet()) {
             this.pillarHash.put(s, safe.getPillarHash().get(s));
         }
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < cols; j++){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 this.lGrid[i][j] = safe.getlGrid()[i][j];
             }
         }
         announceChange();
     }
 
-                              /**
+    /**
      * adds laser at given position, raises error if cannot be placed
      */
-                              public void Add(int row, int col) {
+    public void Add(int row, int col) {
         if (!validCoordinates(row, col)) {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;

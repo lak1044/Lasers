@@ -28,6 +28,14 @@ public class Pillar {
         this.currEmpty = 4;
     }
 
+    public Pillar(Pillar other){
+        this.row = other.row;
+        this.col = other.col;
+        this.maxLasers = other.maxLasers;
+        this.currLasers = other.currLasers;
+        this.currEmpty = other.currEmpty;
+    }
+
     //Returns row position
     public int getRow(){ return this.row; }
 

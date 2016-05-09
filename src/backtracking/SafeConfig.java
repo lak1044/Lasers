@@ -108,10 +108,10 @@ public class SafeConfig implements Configuration {
         laserHash = new HashMap<>();
         pillarHash = new HashMap<>();
         for (String s : other.getLaserHash().keySet()) {
-            laserHash.put(s, other.getLaserHash().get(s));
+            laserHash.put(s, new Laser(other.getLaserHash().get(s)));
         }
         for (String s : other.getPillarHash().keySet()) {
-            pillarHash.put(s, other.getPillarHash().get(s));
+            pillarHash.put(s, new Pillar(other.getPillarHash().get(s)));
         }
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {

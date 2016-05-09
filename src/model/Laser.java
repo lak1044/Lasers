@@ -17,6 +17,12 @@ public class Laser {
         this.valid = true;
     }
 
+    public Laser(Laser other){
+        this.row = other.row;
+        this.col = other.col;
+        this.valid = other.valid;
+    }
+
     /** Returns the row state */
     public int getRow() { return this.row; }
 

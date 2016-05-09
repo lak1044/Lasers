@@ -239,9 +239,11 @@ public class LasersGUI extends Application implements Observer {
     private HBox constructCommandButtons (){
         HBox commandBox = new HBox();
         Button checkButton = new Button("Check");
-        invalidCoordinates[0]=-1;
-        invalidCoordinates[1]=-1;
-        checkButton.setOnAction(event -> model.Verify());// invalidCoordinates = model.invalidCoordinates);
+        checkButton.setOnAction(event -> {
+            invalidCoordinates[0]=-1;
+            invalidCoordinates[1]=-1;
+            model.Verify();
+        });// invalidCoordinates = model.invalidCoordinates);
         Button hintButton = new Button("Hint");
         //hintButton.setOnAction(event -> model.FINDMETHOD);
         hintButton.setOnAction(event2 -> {
