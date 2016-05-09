@@ -1,6 +1,7 @@
 package backtracking;
 
 import model.Laser;
+import model.LasersModel;
 import model.Pillar;
 
 import java.io.File;
@@ -71,7 +72,6 @@ public class SafeConfig implements Configuration {
         in.close();
     }
 
-
     /**
      * Copy constructor.  Takes a config, other, and makes a full "deep" copy
      * of its instance data.
@@ -98,6 +98,40 @@ public class SafeConfig implements Configuration {
     }
 
     /**
+     * Copy constructor using a LasersModel config. Used for the "hint" button in the GUI
+     * Copies the lgrid, laserhash, and pillarhash from the lasersmodel.
+     */
+    public SafeConfig(LasersModel other){
+        this.rows = other.rows;
+        this.cols = other.cols;
+        lGrid = new char[rows][cols];
+        laserHash = new HashMap<>();
+        pillarHash = new HashMap<>();
+        for (String s : other.getLaserHash().keySet()) {
+            laserHash.put(s, other.getLaserHash().get(s));
+        }
+        for (String s : other.getPillarHash().keySet()) {
+            pillarHash.put(s, other.getPillarHash().get(s));
+        }
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                lGrid[i][j] = other.getlGrid()[i][j];
+            }
+        }
+        this.lastRow = 0;
+        this.lastCol = 0;
+    }
+
+    /** Returns the lGrid*/
+    public char[][] getlGrid() { return this.lGrid; }
+
+    /** Returns laserHash*/
+    public HashMap<String, Laser> getLaserHash() { return this.laserHash; }
+
+    /** Returns pillarHash*/
+    public HashMap<String, Pillar> getPillarHash() { return this.pillarHash; }
+
+    /**
      * Makes hash key from the row and column placement in the model
      */
     public String hash(int row, int col) {
@@ -109,6 +143,9 @@ public class SafeConfig implements Configuration {
         Collection<Configuration> successors = new ArrayList<>();
         if (lastRow == -1 && lastCol == -1){
             return successors;
+        }
+        else if (lastRow == 0 && lastCol == 0 && lGrid[0][0] != EMPTY){
+            incrementPos(this);
         }
         SafeConfig lSafe = new SafeConfig(this);
         SafeConfig eSafe = new SafeConfig(this);
@@ -138,7 +175,7 @@ public class SafeConfig implements Configuration {
         if (safe.lastCol == 0) {
             safe.lastRow = (safe.lastRow + 1) % rows;
         }
-        while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY) {
+        while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY && safe.lGrid[safe.lastRow][safe.lastCol] != LASER) {
             safe.lastCol = (safe.lastCol + 1) % cols;
             if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
                 return;

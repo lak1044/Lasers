@@ -1,7 +1,9 @@
 package gui;
 
 import backtracking.Backtracker;
+import backtracking.Configuration;
 import backtracking.SafeConfig;
+import backtracking.SafeSolver;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,6 +21,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import model.*;
 
 /**
@@ -241,8 +244,29 @@ public class LasersGUI extends Application implements Observer {
         checkButton.setOnAction(event -> model.Verify());// invalidCoordinates = model.invalidCoordinates);
         Button hintButton = new Button("Hint");
         //hintButton.setOnAction(event -> model.FINDMETHOD);
+        hintButton.setOnAction(event2 -> {
+                Optional sol = new Backtracker(false).solve(new SafeConfig(model));
+                if (sol.isPresent()){
+                    SafeConfig solution = (SafeConfig)sol.get();
+                    for (String s: solution.getLaserHash().keySet()){
+                        if (!model.getLaserHash().keySet().contains(s)){
+                            model.Add(solution.getLaserHash().get(s).getRow(), solution.getLaserHash().get(s).getCol());
+                            break;
+                        }
+                    }
+                }
+        });
         Button solveButton = new Button("Solve");
         //solveButton.setOnAction(event -> FIND METHOD);
+        solveButton.setOnAction(event1 -> {
+            try {
+                Optional sol = new Backtracker(false).solve(new SafeConfig(model.fileName));
+                if (sol.isPresent()){
+                    SafeConfig solution = (SafeConfig)sol.get();
+                    this.model.copySafconfig(solution);
+                }
+            } catch (FileNotFoundException e) {}
+        });
         Button restartButton = new Button("Restart");
         restartButton.setOnAction(event -> model.Restart());
         Button loadButton = new Button("Load");
@@ -274,7 +298,6 @@ public class LasersGUI extends Application implements Observer {
 
         /*this.model = new LasersModel();
         this.model.addObserver(this);*/
-        //buttonDemo(stage);  // this can be removed/altered
     }
 
     @Override
@@ -350,7 +373,7 @@ public class LasersGUI extends Application implements Observer {
 
 
         //Check for invalid positions.
-        invalidCoordinates = model.invalidCoordinates;
+        invalidCoordinates = model.getInvalidCoordinates();
         if (invalidCoordinates[0]>=0 || invalidCoordinates[1]>=0){
             Button currButton = buttonArray[invalidCoordinates[0]][invalidCoordinates[1]];
             if (model.GetVal(invalidCoordinates[0],invalidCoordinates[1])=='.'){

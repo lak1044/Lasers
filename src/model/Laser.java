@@ -17,6 +17,12 @@ public class Laser {
         this.valid = true;
     }
 
+    /** Returns the row state */
+    public int getRow() { return this.row; }
+
+    /** Returns the col state */
+    public int getCol() { return this.col; }
+
     public boolean isValid(){ return this.valid; }
 
     public void setValid(boolean valid){ this.valid = valid; }

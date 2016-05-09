@@ -1,5 +1,7 @@
 package model;
 
+import backtracking.SafeConfig;
+
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,17 +26,29 @@ public class LasersModel extends Observable {
     public static int cols;
     //Grid
     private char[][] lGrid;
-    //Grid as an ArrayList
-    private ArrayList[][] lGridAry;
     //Hash map of lasers. The key is a string made of the coordinates of said laser and value is laser object
     //Key is (hash(row, col))
     private HashMap<String, Laser> laserHash;
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
-    private static HashMap<String, Pillar> pillarHash;
+    private HashMap<String, Pillar> pillarHash;
     public String fileName;
     // invalid coordinates for Verify(); int[0] = row; int[1] = col
-    public int[] invalidCoordinates = new int[2];
+    private int[] invalidCoordinates = new int[2];
+
+    /** Returns the invalidCoordinates array */
+    public int[] getInvalidCoordinates() {
+        return this.invalidCoordinates;
+    }
+
+    /** Returns the laserHash */
+    public HashMap<String, Laser> getLaserHash() { return this.laserHash; }
+
+    /** Returns the pillarHash */
+    public HashMap<String, Pillar> getPillarHash() { return this.pillarHash; }
+
+    /** Returns the lGrid */
+    public char[][] getlGrid() { return this.lGrid; }
 
     /**
      * Creates a new instance of a laserModel
@@ -42,9 +56,9 @@ public class LasersModel extends Observable {
      * Adds numerical pillars to the pillar hash for future use
      */
     public LasersModel(String filename) throws FileNotFoundException {
-        fileName=filename;
-        invalidCoordinates[0]=-1;
-        invalidCoordinates[1]=-1;
+        fileName = filename;
+        invalidCoordinates[0] = -1;
+        invalidCoordinates[1] = -1;
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -52,15 +66,10 @@ public class LasersModel extends Observable {
         pillarHash = new HashMap<>();
         //Filling the grid
         lGrid = new char[rows][cols];
-        //lGridAry = new ArrayList[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 char gridChar = in.next().charAt(0);
                 lGrid[i][j] = gridChar;
-//                if (Character.isDigit(gridChar)){
-//                    lGridAry[i][j] = new ArrayList<Pillar>();
-//                    lGridAry[i][j].add(new Pillar(i, j, Character.getNumericValue(gridChar)));
-//                }
                 if (Character.isDigit(lGrid[i][j])) {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                     pillarHash.put(hash(i, j), newPillar);
@@ -70,10 +79,31 @@ public class LasersModel extends Observable {
         in.close();
     }
 
-    /**
+    /** Copies the grid state, pillar hashmap, and laser hashmap from a SafeConfig instace.
+     * This is for changing the model to match a solved safe.
+     * @param safe SafeConfig instance to be copied
+     */
+    public void copySafconfig(SafeConfig safe){
+        this.laserHash = new HashMap<>();
+        this.pillarHash = new HashMap<>();
+        for (String s: safe.getLaserHash().keySet()){
+            this.laserHash.put(s, safe.getLaserHash().get(s));
+        }
+        for (String s: safe.getPillarHash().keySet()){
+            this.pillarHash.put(s, safe.getPillarHash().get(s));
+        }
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                this.lGrid[i][j] = safe.getlGrid()[i][j];
+            }
+        }
+        announceChange();
+    }
+
+                              /**
      * adds laser at given position, raises error if cannot be placed
      */
-    public void Add(int row, int col) {
+                              public void Add(int row, int col) {
         if (!validCoordinates(row, col)) {
             System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
             return;
@@ -156,8 +186,8 @@ public class LasersModel extends Observable {
                     case LASER:
                         if (!ValidLaser(i, j)) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
-                            invalidCoordinates[0]=i;
-                            invalidCoordinates[1]=j;
+                            invalidCoordinates[0] = i;
+                            invalidCoordinates[1] = j;
                             announceChange();
                             return;// invalidCoordinates;
                         }
@@ -170,8 +200,8 @@ public class LasersModel extends Observable {
                         if (pillarHash.get(hash(i, j)).currLasers !=
                                 pillarHash.get(hash(i, j)).maxLasers) {
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
-                            invalidCoordinates[0]=i;
-                            invalidCoordinates[1]=j;
+                            invalidCoordinates[0] = i;
+                            invalidCoordinates[1] = j;
                             announceChange();
                             return;// invalidCoordinates;
                         }
@@ -179,8 +209,8 @@ public class LasersModel extends Observable {
                     //Must be empty if failed all other cases
                     default:
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
-                        invalidCoordinates[0]=i;
-                        invalidCoordinates[1]=j;
+                        invalidCoordinates[0] = i;
+                        invalidCoordinates[1] = j;
                         announceChange();
                         return;// invalidCoordinates;
 
@@ -189,8 +219,8 @@ public class LasersModel extends Observable {
         }
         System.out.println("Safe is fully verified!");
 
-        invalidCoordinates[0]=-1;
-        invalidCoordinates[1]=-1;
+        invalidCoordinates[0] = -1;
+        invalidCoordinates[1] = -1;
         announceChange();
         return;// invalidCoordinates;
     }
@@ -313,7 +343,7 @@ public class LasersModel extends Observable {
     /**
      * Makes hash key from the row and column placement in the model
      */
-    public String hash(int row, int col){
+    public String hash(int row, int col) {
         return (Integer.toString(row) + Integer.toString(col));
     }
 
@@ -350,7 +380,6 @@ public class LasersModel extends Observable {
         }
         return result;
     }
-    // TODO
 
     /**
      * A utility method that indicates the model has changed and
@@ -364,14 +393,15 @@ public class LasersModel extends Observable {
     /**
      * A getter method to facilitate construction of GUI
      */
-    public char GetVal(int row, int col){return lGrid[row][col];}
-
+    public char GetVal(int row, int col) {
+        return lGrid[row][col];
+    }
 
 
     /**
      * Restart method clears the board by recreating the initial model to an empty safe grid
      */
-    public void Restart(){
+    public void Restart() {
         try {
             String filename = fileName;
             Scanner in = new Scanner(new File(filename));
@@ -398,8 +428,8 @@ public class LasersModel extends Observable {
             }
             in.close();
             announceChange();
+        } catch (FileNotFoundException e) {
         }
-        catch (FileNotFoundException e){}
     }
 
 
