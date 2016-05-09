@@ -103,10 +103,10 @@ public class LasersModel extends Observable {
         this.laserHash = new HashMap<>();
         this.pillarHash = new HashMap<>();
         for (String s : safe.getLaserHash().keySet()) {
-            this.laserHash.put(s, safe.getLaserHash().get(s));
+            this.laserHash.put(s, new Laser(safe.getLaserHash().get(s)));
         }
         for (String s : safe.getPillarHash().keySet()) {
-            this.pillarHash.put(s, safe.getPillarHash().get(s));
+            this.pillarHash.put(s, new Pillar(safe.getPillarHash().get(s)));
         }
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -360,7 +360,7 @@ public class LasersModel extends Observable {
      * Makes hash key from the row and column placement in the model
      */
     public String hash(int row, int col) {
-        return (Integer.toString(row) + Integer.toString(col));
+        return (Integer.toString(row) + " " + Integer.toString(col));
     }
 
     //Overrides

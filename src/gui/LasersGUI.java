@@ -36,9 +36,6 @@ public class LasersGUI extends Application implements Observer {
     /** The UI's connection to the model */
     private LasersModel model;
 
-    /** this can be removed - it is used to demonstrates the button toggle */
-    private static boolean status = true;
-
     /** state of borderPane for GUI */
     private BorderPane borderPane;
 
@@ -47,6 +44,12 @@ public class LasersGUI extends Application implements Observer {
 
     /** state of buttons in array for update() */
     private Button[][] buttonArray;
+
+    /** Label at the top of the grid */
+    private Label status;
+
+    /** state of displayed message at the top of the grid */
+    private String message;
 
     /** state used for restart method */
     private String FILENAME;
@@ -88,39 +91,14 @@ public class LasersGUI extends Application implements Observer {
     }
 
     /**
-     * This is a private demo method that shows how to create a button
-     * and attach a foreground image with a background image that
-     * toggles from yellow to red each time it is pressed.
-     *
-     * @param stage the stage to add components into
+     * Constructs the center of the borderPane.
+     * Creates a gridPane of button based off the lGrid of the model.
+     * @return GridPane of buttons that match the model.
      */
-    private void buttonDemo(Stage stage) {
-        // this demonstrates how to create a button and attach a foreground and
-        // background image to it.
-        Button button = new Button();
-        Image laserImg = new Image(getClass().getResourceAsStream("resources/laser.png"));
-        ImageView laserIcon = new ImageView(laserImg);
-        button.setGraphic(laserIcon);
-        setButtonBackground(button, "yellow.png");
-        button.setOnAction(e -> {
-            // toggles background between yellow and red
-            if (!status) {
-                setButtonBackground(button, "yellow.png");
-            } else {
-                setButtonBackground(button, "red.png");
-            }
-            status = !status;
-        });
-
-        Scene scene = new Scene(button);
-        stage.setScene(scene);
-    }
-
-
     private GridPane constructSafeGrid(){
         buttonGrid = new GridPane();
         buttonArray = new Button[model.rows][model.cols];
-        for (int i=0; i<model.rows; i++) {
+        for (int i=0; i< model.rows; i++) {
             for (int j = 0; j < model.cols; j++) {
 
                 char toCheck = model.GetVal(i,j);
@@ -235,7 +213,18 @@ public class LasersGUI extends Application implements Observer {
         return buttonGrid;
     }
 
-
+    /**
+     * Constructs the bottom of the borderPane
+     * Creates a check, hint, solve, restart, and load button.
+     * Check verifies the current state of the model to see if it's a solution
+     * Hint attempts to solve the current config
+     *      if it does, it provides the next laser
+     *      if it doesn't it displays a status message
+     * Solve solves the safe as it is from the base file.
+     * Restart sets the model back to it's original state as read from a file
+     * Load loads in a new safe from a file.
+     * @return
+     */
     private HBox constructCommandButtons (){
         HBox commandBox = new HBox();
         Button checkButton = new Button("Check");
@@ -287,9 +276,10 @@ public class LasersGUI extends Application implements Observer {
         // TODO
 
         borderPane = new BorderPane();
-        Label statusLabel = new Label(model.fileName + " loaded");
-        statusLabel.setAlignment(Pos.CENTER);
-        borderPane.setTop(statusLabel);
+        message = (model.fileName + " loaded");
+        status = new Label(message);
+        status.setAlignment(Pos.CENTER);
+        borderPane.setTop(status);
         borderPane.setCenter(constructSafeGrid());
         borderPane.setBottom(constructCommandButtons());
 
@@ -314,6 +304,8 @@ public class LasersGUI extends Application implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         // TODO
+
+        status.setText(message);
 
         for (int i=0; i<model.rows; i++) {
             for (int j = 0; j < model.cols; j++) {

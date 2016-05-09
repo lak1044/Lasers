@@ -67,6 +67,10 @@ public class SafeConfig implements Configuration {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                     pillarHash.put(hash(i, j), newPillar);
                 }
+                else if (lGrid[i][j] == LASER){
+                    Laser newLaser = new Laser(i, j);
+                    laserHash.put(hash(i, j), newLaser);
+                }
             }
         }
         in.close();
@@ -135,7 +139,7 @@ public class SafeConfig implements Configuration {
      * Makes hash key from the row and column placement in the model
      */
     public String hash(int row, int col) {
-        return (Integer.toString(row) + Integer.toString(col));
+        return (Integer.toString(row) + " " + Integer.toString(col));
     }
 
     @Override
@@ -268,7 +272,7 @@ public class SafeConfig implements Configuration {
         for (String s: safe.pillarHash.keySet()){
             row = safe.pillarHash.get(s).getRow();
             col = safe.pillarHash.get(s).getCol();
-            if (safe.lastRow - 1 > row && safe.lastCol > col){
+            if ((safe.lastRow - 1 > row && safe.lastCol - 1 > col) || safe.lastRow -2 > row){
                 continue;
             }
             currLasers = 0;
@@ -320,7 +324,7 @@ public class SafeConfig implements Configuration {
             }
         }
         for (String s : pillarHash.keySet()) {
-            if (lastRow > pillarHash.get(s).getRow() && lastCol > pillarHash.get(s).getCol()){
+            if (lastRow > pillarHash.get(s).getRow() && lastCol - 1 > pillarHash.get(s).getCol()){
                 if (pillarHash.get(s).getCurrLasers() != pillarHash.get(s).getMaxLasers()){
                     return false;
                 }
@@ -329,13 +333,16 @@ public class SafeConfig implements Configuration {
                 if (pillarHash.get(s).getCurrLasers() > pillarHash.get(s).getMaxLasers()) {
                     return false;
                 } else if (pillarHash.get(s).getCurrLasers() + pillarHash.get(s).getCurrEmpty() < pillarHash.get(s).getMaxLasers()) {
-                    return false;
+                   return false;
                 }
             }
         }
         return true;
     }
 
+    public void printCursor() {
+        System.out.println("<" + this.lastRow + ", " + this.lastCol + ">");
+    }
     @Override
     public boolean isGoal() {
         updatePillars(this);
