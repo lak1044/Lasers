@@ -385,8 +385,5 @@ public class LasersGUI extends Application implements Observer {
         }
         invalidCoordinates[0]=-1;
         invalidCoordinates[1]=-1;
-
-
-
     }
 }

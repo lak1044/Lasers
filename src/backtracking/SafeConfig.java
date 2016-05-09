@@ -258,7 +258,7 @@ public class SafeConfig implements Configuration {
     }
 
     /**
-     * Updates everypillars current laser amount
+     * Updates every pillars current laser and empty space count
      */
     public void updatePillars(SafeConfig safe){
         int row;
