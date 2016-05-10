@@ -10,9 +10,12 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -50,6 +53,8 @@ public class LasersGUI extends Application implements Observer {
     private String FILENAME;
 
     private int[] invalidCoordinates = new int[2];
+
+    private Stage stage;
 
 
     @Override
@@ -244,7 +249,7 @@ public class LasersGUI extends Application implements Observer {
                     }
                 }
                 else {
-                    model.message = "Hint: no next step!";
+                    model.NoHint();
                 }
 
         });
@@ -267,7 +272,7 @@ public class LasersGUI extends Application implements Observer {
         Button restartButton = new Button("Restart");
         restartButton.setOnAction(event -> model.Restart());
         Button loadButton = new Button("Load");
-        //loadButton.setOnAction ( event -> load filename)
+        loadButton.setOnAction ( event -> Load());
 
         commandBox.getChildren().addAll(checkButton,hintButton,solveButton,restartButton,loadButton);
 
@@ -301,6 +306,7 @@ public class LasersGUI extends Application implements Observer {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // TODO
+        stage = primaryStage;
         init(primaryStage);  // do all your UI initialization here
 
         primaryStage.setTitle("Lasers");
@@ -388,5 +394,40 @@ public class LasersGUI extends Application implements Observer {
 
         borderPane.setTop(new Label(model.message));
 
+    }
+
+
+    //Load method to load new files
+    private void Load(){
+        FileChooser fileChooser = new FileChooser();
+        //String loadName;
+        File loadFile = fileChooser.showOpenDialog(stage);
+        //Paths.get(loadName).getFileName().toString();
+
+
+
+        if (loadFile!=null) {
+            String loadPath = loadFile.toString();
+            String loadName = Paths.get(loadPath).getFileName().toString();
+            System.out.println("file loaded " + loadName);
+            try {
+                this.model = new LasersModel(loadName);
+                stage.sizeToScene();
+                borderPane = new BorderPane();
+                message = (model.fileName + " loaded");
+                status = new Label(message);
+                status.setAlignment(Pos.CENTER);
+                borderPane.setTop(status);
+                borderPane.setCenter(constructSafeGrid());
+                borderPane.setBottom(constructCommandButtons());
+
+                Scene scene = new Scene(borderPane);
+                stage.setScene(scene);
+            }
+            catch (FileNotFoundException e){}
+        }
+
+
+        //this.model = new LasersModel(loadFile)
     }
 }
