@@ -244,7 +244,7 @@ public class LasersGUI extends Application implements Observer {
                     }
                 }
                 else {
-                    this.model.message = "Hint: no next step!";
+                    model.message = "Hint: no next step!";
                 }
 
         });

@@ -2,10 +2,8 @@ package model;
 
 import backtracking.SafeConfig;
 
-import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
@@ -147,7 +145,7 @@ public class LasersModel extends Observable {
         if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
-        if (message == "Hint: "){
+        if (message.equals("Hint: ")){
             message += "Laser added at: (" + row + ", " + col + ")";
         }
         else {
@@ -246,7 +244,6 @@ public class LasersModel extends Observable {
         invalidCoordinates[0] = -1;
         invalidCoordinates[1] = -1;
         announceChange();
-        return;// invalidCoordinates;
     }
 
     //Helper Functions
@@ -440,10 +437,6 @@ public class LasersModel extends Observable {
                 for (int j = 0; j < cols; j++) {
                     char gridChar = in.next().charAt(0);
                     lGrid[i][j] = gridChar;
-//                if (Character.isDigit(gridChar)){
-//                    lGridAry[i][j] = new ArrayList<Pillar>();
-//                    lGridAry[i][j].add(new Pillar(i, j, Character.getNumericValue(gridChar)));
-//                }
                     if (Character.isDigit(lGrid[i][j])) {
                         Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                         pillarHash.put(hash(i, j), newPillar);
@@ -453,7 +446,6 @@ public class LasersModel extends Observable {
             in.close();
             message = filename+" has been reset";
             announceChange();
-        } catch (FileNotFoundException e) {
-        }
+        } catch (FileNotFoundException e) {}
     }
 }
