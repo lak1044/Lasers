@@ -448,4 +448,9 @@ public class LasersModel extends Observable {
             announceChange();
         } catch (FileNotFoundException e) {}
     }
+
+    public void NoHint(){
+        message = "Hint: no next step!";
+        announceChange();
+    }
 }
