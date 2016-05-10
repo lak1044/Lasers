@@ -147,8 +147,12 @@ public class LasersModel extends Observable {
         if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
-        message = "Laser added at: (" + row + ", " + col + ")";
-        //System.out.printf("Laser added at: (%d, %d)\n", row, col);
+        if (message == "Hint: "){
+            message += "Laser added at: (" + row + ", " + col + ")";
+        }
+        else {
+            message = "Laser added at: (" + row + ", " + col + ")";
+        }
         announceChange();
     }
 
