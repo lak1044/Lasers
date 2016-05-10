@@ -255,6 +255,10 @@ public class LasersGUI extends Application implements Observer {
                 if (sol.isPresent()){
                     SafeConfig solution = (SafeConfig)sol.get();
                     this.model.copySafconfig(solution);
+                    this.model.message= this.model.fileName+" solved";
+                }
+                else {
+                    this.model.message= model.fileName+" has no solution!";
                 }
             } catch (FileNotFoundException e) {}
         });
@@ -379,5 +383,8 @@ public class LasersGUI extends Application implements Observer {
         }
         invalidCoordinates[0]=-1;
         invalidCoordinates[1]=-1;
+
+        borderPane.setTop(new Label(model.message));
+
     }
 }
