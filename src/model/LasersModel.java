@@ -35,6 +35,8 @@ public class LasersModel extends Observable {
     public String fileName;
     // invalid coordinates for Verify(); int[0] = row; int[1] = col
     private int[] invalidCoordinates = new int[2];
+    // new message state (helpful for update() for GUI)
+    public String message;
 
     /**
      * Returns the invalidCoordinates array
@@ -73,6 +75,7 @@ public class LasersModel extends Observable {
         fileName = filename;
         invalidCoordinates[0] = -1;
         invalidCoordinates[1] = -1;
+        message = filename+ "loaded";
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -144,7 +147,9 @@ public class LasersModel extends Observable {
         if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers += 1;
         }
-        System.out.printf("Laser added at: (%d, %d)\n", row, col);
+        message = "Laser added at: "+row+", "+col;
+        //System.out.printf("Laser added at: (%d, %d)\n", row, col);
+        System.out.println(message);
         announceChange();
     }
 
@@ -179,7 +184,9 @@ public class LasersModel extends Observable {
         if (isPillar(row, col + 1)) {
             pillarHash.get(hash(row, col + 1)).currLasers -= 1;
         }
-        System.out.printf("Laser removed at: (%d, %d)\n", row, col);
+        message = "Laser removed at: "+row+", "+col;
+        //System.out.printf("Laser removed at: (%d, %d)\n", row, col);
+        System.out.println(message);
         announceChange();
     }
 
@@ -201,6 +208,7 @@ public class LasersModel extends Observable {
                         break;
                     case LASER:
                         if (!ValidLaser(i, j)) {
+                            message = "Error verifying at: (" + i + ", " + j + ")";
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             invalidCoordinates[0] = i;
                             invalidCoordinates[1] = j;
@@ -215,6 +223,7 @@ public class LasersModel extends Observable {
                     case '4':
                         if (pillarHash.get(hash(i, j)).currLasers !=
                                 pillarHash.get(hash(i, j)).maxLasers) {
+                            message = "Error verifying at: (" + i + ", " + j + ")";
                             System.out.println("Error verifying at: (" + i + ", " + j + ")");
                             invalidCoordinates[0] = i;
                             invalidCoordinates[1] = j;
@@ -224,6 +233,7 @@ public class LasersModel extends Observable {
                         break;
                     //Must be empty if failed all other cases
                     default:
+                        message = "Error verifying at: (" + i + ", " + j + ")";
                         System.out.println("Error verifying at: (" + i + ", " + j + ")");
                         invalidCoordinates[0] = i;
                         invalidCoordinates[1] = j;
@@ -233,6 +243,7 @@ public class LasersModel extends Observable {
                 }
             }
         }
+        message = "Safe is fully verified!";
         System.out.println("Safe is fully verified!");
 
         invalidCoordinates[0] = -1;
@@ -443,6 +454,7 @@ public class LasersModel extends Observable {
                 }
             }
             in.close();
+            message = filename+" has been reset";
             announceChange();
         } catch (FileNotFoundException e) {
         }
