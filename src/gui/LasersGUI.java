@@ -242,10 +242,15 @@ public class LasersGUI extends Application implements Observer {
                     for (String s: solution.getLaserHash().keySet()){
                         if (!model.getLaserHash().keySet().contains(s)){
                             model.Add(solution.getLaserHash().get(s).getRow(), solution.getLaserHash().get(s).getCol());
+                            //this.model.message = "Hint " + this.model.message;
                             break;
                         }
                     }
                 }
+                else {
+                    this.model.message = "Hint: no next step!";
+                }
+
         });
         Button solveButton = new Button("Solve");
         //solveButton.setOnAction(event -> FIND METHOD);
@@ -254,8 +259,9 @@ public class LasersGUI extends Application implements Observer {
                 Optional sol = new Backtracker(false).solve(new SafeConfig(model.fileName));
                 if (sol.isPresent()){
                     SafeConfig solution = (SafeConfig)sol.get();
-                    this.model.copySafconfig(solution);
                     this.model.message= this.model.fileName+" solved";
+                    this.model.copySafeconfig(solution);
+
                 }
                 else {
                     this.model.message= model.fileName+" has no solution!";
