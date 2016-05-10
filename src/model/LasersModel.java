@@ -40,30 +40,22 @@ public class LasersModel extends Observable {
     // new message state (helpful for update() for GUI)
     public String message;
 
-    /**
-     * Returns the invalidCoordinates array
-     */
+    /** Returns the invalidCoordinates array */
     public int[] getInvalidCoordinates() {
         return this.invalidCoordinates;
     }
 
-    /**
-     * Returns the laserHash
-     */
+    /** Returns the laserHash */
     public HashMap<String, Laser> getLaserHash() {
         return this.laserHash;
     }
 
-    /**
-     * Returns the pillarHash
-     */
+    /** Returns the pillarHash */
     public HashMap<String, Pillar> getPillarHash() {
         return this.pillarHash;
     }
 
-    /**
-     * Returns the lGrid
-     */
+    /** Returns the lGrid */
     public char[][] getlGrid() {
         return this.lGrid;
     }
@@ -90,9 +82,17 @@ public class LasersModel extends Observable {
             for (int j = 0; j < cols; j++) {
                 char gridChar = in.next().charAt(0);
                 lGrid[i][j] = gridChar;
+                //if the value is a numerical based pillar
+                //  Create a new pillar object and add it to the hash
                 if (Character.isDigit(lGrid[i][j])) {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                     pillarHash.put(hash(i, j), newPillar);
+                }
+                //if the value is a laser
+                //  Create a new laser object and add it to the hash
+                else if (lGrid[i][j] == LASER){
+                    Laser newLaser = new Laser(i, j);
+                    laserHash.put(hash(i, j), newLaser);
                 }
             }
         }
@@ -102,18 +102,20 @@ public class LasersModel extends Observable {
     /**
      * Copies the grid state, pillar hashmap, and laser hashmap from a SafeConfig instace.
      * This is for changing the model to match a solved safe.
-     *
      * @param safe SafeConfig instance to be copied
      */
     public void copySafeconfig(SafeConfig safe) {
         this.laserHash = new HashMap<>();
         this.pillarHash = new HashMap<>();
+        //Copies the laserhash
         for (String s : safe.getLaserHash().keySet()) {
             this.laserHash.put(s, new Laser(safe.getLaserHash().get(s)));
         }
+        //Copies the pillarhash
         for (String s : safe.getPillarHash().keySet()) {
             this.pillarHash.put(s, new Pillar(safe.getPillarHash().get(s)));
         }
+        //Copies the lGrid
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 this.lGrid[i][j] = safe.getlGrid()[i][j];
@@ -140,6 +142,8 @@ public class LasersModel extends Observable {
         Laser newLaser = new Laser(row, col);
         laserHash.put(hash(row, col), newLaser);
         AddBeams(row, col);
+        //Check the positions around the laser to see if they are pillars
+        //  if so, update the pillar's currLasers amount
         if (isPillar(row - 1, col)) {
             pillarHash.get(hash(row - 1, col)).currLasers += 1;
         }
@@ -182,6 +186,8 @@ public class LasersModel extends Observable {
             laserHash.get(s).valid = true;
             AddBeams(laserHash.get(s).row, laserHash.get(s).col);
         }
+        //Check around the removed laser for pillars
+        //  if there are pillars, update the currLasers amount
         if (isPillar(row - 1, col)) {
             pillarHash.get(hash(row - 1, col)).currLasers -= 1;
         }
@@ -427,7 +433,6 @@ public class LasersModel extends Observable {
         return lGrid[row][col];
     }
 
-
     /**
      * Restart method clears the board by recreating the initial model to an empty safe grid
      */
@@ -458,6 +463,7 @@ public class LasersModel extends Observable {
         } catch (FileNotFoundException e) {}
     }
 
+    /** Method to allow for announceChange with hint button if config cannot be solved */
     public void NoHint(){
         message = "Hint: no next step!";
         announceChange();

@@ -51,8 +51,12 @@ public class SafeConfig implements Configuration {
     private int lastCol;
 
 
+    /** Constructor for a new SafeConfig
+     * Reads in a file and creates a new SafeConfig object
+     * @param filename file to read from
+     * @throws FileNotFoundException
+     */
     public SafeConfig(String filename) throws FileNotFoundException {
-
         Scanner in = new Scanner(new File(filename));
         rows = Integer.parseInt(in.next());
         cols = Integer.parseInt(in.next());
@@ -63,10 +67,12 @@ public class SafeConfig implements Configuration {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 lGrid[i][j] = in.next().charAt(0);
+                //If the value is a numerical based pillar
                 if (Character.isDigit(lGrid[i][j])) {
                     Pillar newPillar = new Pillar(i, j, Character.getNumericValue(lGrid[i][j]));
                     pillarHash.put(hash(i, j), newPillar);
                 }
+                //If the value is a Laser
                 else if (lGrid[i][j] == LASER){
                     Laser newLaser = new Laser(i, j);
                     laserHash.put(hash(i, j), newLaser);
@@ -79,7 +85,6 @@ public class SafeConfig implements Configuration {
     /**
      * Copy constructor.  Takes a config, other, and makes a full "deep" copy
      * of its instance data.
-     *
      * @param other the config to copy
      */
     public SafeConfig(SafeConfig other) {
@@ -135,30 +140,33 @@ public class SafeConfig implements Configuration {
     /** Returns pillarHash*/
     public HashMap<String, Pillar> getPillarHash() { return this.pillarHash; }
 
-    /**
-     * Makes hash key from the row and column placement in the model
-     */
+    /** Makes hash key from the row and column placement in the model */
     public String hash(int row, int col) {
         return (Integer.toString(row) + " " + Integer.toString(col));
     }
 
     @Override
     public Collection<Configuration> getSuccessors() {
+        //Create an empty list of successors
         Collection<Configuration> successors = new ArrayList<>();
+        //If out of the grid, it already finished filling in the grid, so return empty list
         if (lastRow == -1 && lastCol == -1){
             return successors;
         }
+        //If pos is at the first position and said position is not empty increment
         else if (lastRow == 0 && lastCol == 0 && lGrid[0][0] != EMPTY){
             incrementPos(this);
         }
+        //Create two new children
         SafeConfig lSafe = new SafeConfig(this);
         SafeConfig eSafe = new SafeConfig(this);
+        //Add a laser to the lSafe and extend the beams of the laser
         lSafe.lGrid[lSafe.lastRow][lSafe.lastCol] = LASER;
         lSafe.laserHash.put(hash(lSafe.lastRow, lSafe.lastCol), new Laser(lSafe.lastRow, lSafe.lastCol));
         AddBeams(lSafe);
-            incrementPos(lSafe);
-            incrementPos(eSafe);
-            successors.add(lSafe);
+        incrementPos(lSafe);
+        incrementPos(eSafe);
+        successors.add(lSafe);
         successors.add(eSafe);
         return successors;
     }
@@ -167,27 +175,25 @@ public class SafeConfig implements Configuration {
      * Increments the lastRow and lastCol states
      */
     public void incrementPos(SafeConfig safe){
+        //If already out of the safe, simply return
         if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
             safe.lastRow = -1;
             safe.lastCol = -1;
             return;
         }
-        safe.lastCol = (safe.lastCol + 1) % cols;
-        if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
-            return;
-        }
-        if (safe.lastCol == 0) {
-            safe.lastRow = (safe.lastRow + 1) % rows;
-        }
-        while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY && safe.lGrid[safe.lastRow][safe.lastCol] != LASER) {
+
+        do {
+            //Increment the column position by one
             safe.lastCol = (safe.lastCol + 1) % cols;
-            if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1){
-                return;
-            }
+            //If the column wrapped, increment the row by one
             if (safe.lastCol == 0) {
                 safe.lastRow = (safe.lastRow + 1) % rows;
             }
-        }
+            //If the position is at the end, return
+            if (safe.lastRow == rows - 1 && safe.lastCol == cols - 1) {
+                return;
+            }
+        } while (safe.lGrid[safe.lastRow][safe.lastCol] != EMPTY && safe.lGrid[safe.lastRow][safe.lastCol] != LASER);
     }
     /**
      * Extends beams from given laser coordinate
@@ -246,9 +252,7 @@ public class SafeConfig implements Configuration {
         return ((row >= 0) && (row < rows) && (col >= 0) && (col < cols));
     }
 
-    /**
-     * returns whether or not the current grid has empty spaces in it
-     */
+    /** returns whether or not the current grid has empty spaces in it */
     public boolean hasEmptySpaces(){
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -261,9 +265,7 @@ public class SafeConfig implements Configuration {
         return false;
     }
 
-    /**
-     * Updates every pillars current laser and empty space count
-     */
+    /** Updates every pillars current laser and empty space count */
     public void updatePillars(SafeConfig safe){
         int row;
         int col;

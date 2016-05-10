@@ -49,9 +49,7 @@ public class LasersGUI extends Application implements Observer {
     /** state of displayed message at the top of the grid */
     private String message;
 
-    /** state used for restart method */
-    private String FILENAME;
-
+    /** Array of coordinates used when the model fails to verify */
     private int[] invalidCoordinates = new int[2];
 
     private Stage stage;
@@ -283,32 +281,21 @@ public class LasersGUI extends Application implements Observer {
      * The
      * @param stage the stage to add UI components into
      */
-    private void init(Stage stage) {
-        // TODO
-
-        borderPane = new BorderPane();
+    private void init(Stage stage) {borderPane = new BorderPane();
         message = (model.messageFile + " loaded");
         status = new Label(message);
         status.setAlignment(Pos.CENTER);
         borderPane.setTop(status);
         borderPane.setCenter(constructSafeGrid());
         borderPane.setBottom(constructCommandButtons());
-
-
-
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
-
-        /*this.model = new LasersModel();
-        this.model.addObserver(this);*/
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO
         stage = primaryStage;
         init(primaryStage);  // do all your UI initialization here
-
         primaryStage.setTitle("Lasers");
         primaryStage.show();
     }
@@ -397,20 +384,23 @@ public class LasersGUI extends Application implements Observer {
     }
 
 
-    //Load method to load new files
+    /** Loads a new file into the gui
+     * Method for loading in a new file from the load button
+     * Gets the new file path, creates a new model, and adds itself to the model's observers
+     */
     private void Load(){
+        //Get file
         FileChooser fileChooser = new FileChooser();
-        //String loadName;
         File loadFile = fileChooser.showOpenDialog(null);
-        //Paths.get(loadName).getFileName().toString();
-
-
-
+        //If the file exists
         if (loadFile!=null) {
+            //Get path name
             String loadName = loadFile.toString();
             try {
+                //Create a new model
                 this.model = new LasersModel(loadName);
                 stage.sizeToScene();
+                //Remake the window's elements
                 borderPane = new BorderPane();
                 message = (model.fileName + " loaded");
                 status = new Label(message);
@@ -418,15 +408,12 @@ public class LasersGUI extends Application implements Observer {
                 borderPane.setTop(status);
                 borderPane.setCenter(constructSafeGrid());
                 borderPane.setBottom(constructCommandButtons());
+                //Add gui to the model's observers
                 model.addObserver(this);
-
                 Scene scene = new Scene(borderPane);
                 stage.setScene(scene);
             }
             catch (FileNotFoundException e){}
         }
-
-
-        //this.model = new LasersModel(loadFile)
     }
 }

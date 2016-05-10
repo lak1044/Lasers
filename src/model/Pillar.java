@@ -28,6 +28,7 @@ public class Pillar {
         this.currEmpty = 4;
     }
 
+    /** Copy constructor from another Pillar object */
     public Pillar(Pillar other){
         this.row = other.row;
         this.col = other.col;

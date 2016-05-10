@@ -8,15 +8,14 @@ public class Laser {
     int col;
     boolean valid;
 
-    /**
-     * Construct a new laser object
-     */
+    /** Construct a new laser object */
     public Laser(int row, int col){
         this.row = row;
         this.col = col;
         this.valid = true;
     }
 
+    /** Copy constructor from another Laser object */
     public Laser(Laser other){
         this.row = other.row;
         this.col = other.col;
@@ -29,7 +28,9 @@ public class Laser {
     /** Returns the col state */
     public int getCol() { return this.col; }
 
+    /** Returns the valid state */
     public boolean isValid(){ return this.valid; }
 
+    /** Sets the valid state */
     public void setValid(boolean valid){ this.valid = valid; }
 }
