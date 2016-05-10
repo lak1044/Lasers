@@ -1,7 +1,9 @@
 package gui;
 
 import backtracking.Backtracker;
+import backtracking.Configuration;
 import backtracking.SafeConfig;
+import backtracking.SafeSolver;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,12 +13,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import model.*;
 
 /**
@@ -249,7 +254,11 @@ public class LasersGUI extends Application implements Observer {
                 Optional sol = new Backtracker(false).solve(new SafeConfig(model.fileName));
                 if (sol.isPresent()){
                     SafeConfig solution = (SafeConfig)sol.get();
-                    this.model.copySafeconfig(solution);
+                    this.model.copySafconfig(solution);
+                    this.model.message= this.model.fileName+" solved";
+                }
+                else {
+                    this.model.message= model.fileName+" has no solution!";
                 }
             } catch (FileNotFoundException e) {}
         });
@@ -374,5 +383,8 @@ public class LasersGUI extends Application implements Observer {
         }
         invalidCoordinates[0]=-1;
         invalidCoordinates[1]=-1;
+
+        borderPane.setTop(new Label(model.message));
+
     }
 }
