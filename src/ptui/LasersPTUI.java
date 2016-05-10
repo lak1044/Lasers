@@ -38,7 +38,7 @@ public class LasersPTUI implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        //Should this simply be a toString?
-        // TODO
+        System.out.println(model.message);
+        System.out.println(model);
     }
 }

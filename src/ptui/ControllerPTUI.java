@@ -38,7 +38,6 @@ public class ControllerPTUI  {
                     return;
                 }
                 lasers.Add(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
-                System.out.println(lasers);
                 break;
             case 'r':
                 if (commandAry.length != 3) {
@@ -46,11 +45,9 @@ public class ControllerPTUI  {
                     return;
                 }
                 lasers.Remove(Integer.parseInt(commandAry[1]), Integer.parseInt(commandAry[2]));
-                System.out.println(lasers);
                 break;
             case 'v':
                 lasers.Verify();
-                System.out.println(lasers);
                 break;
             case 'd':
                 System.out.println(lasers);
@@ -109,7 +106,6 @@ public class ControllerPTUI  {
         if (inputFile != null){
             fileCommands(inputFile, this.model);
         }
-
         Scanner sc = new Scanner(System.in);
         while (true){
             System.out.printf("> ");
