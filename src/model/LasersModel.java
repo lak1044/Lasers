@@ -99,7 +99,7 @@ public class LasersModel extends Observable {
      *
      * @param safe SafeConfig instance to be copied
      */
-    public void copySafconfig(SafeConfig safe) {
+    public void copySafeconfig(SafeConfig safe) {
         this.laserHash = new HashMap<>();
         this.pillarHash = new HashMap<>();
         for (String s : safe.getLaserHash().keySet()) {

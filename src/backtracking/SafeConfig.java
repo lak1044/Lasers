@@ -340,9 +340,6 @@ public class SafeConfig implements Configuration {
         return true;
     }
 
-    public void printCursor() {
-        System.out.println("<" + this.lastRow + ", " + this.lastCol + ">");
-    }
     @Override
     public boolean isGoal() {
         updatePillars(this);

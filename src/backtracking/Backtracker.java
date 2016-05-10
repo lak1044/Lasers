@@ -54,7 +54,6 @@ public class Backtracker {
      */
     public Optional<Configuration> solve(Configuration config) {
         debugPrint("Current config", config);
-        ((SafeConfig) config).printCursor();
         if (config.isGoal()) {
             debugPrint("\tGoal config", config);
             return Optional.of(config);
@@ -71,7 +70,6 @@ public class Backtracker {
                     debugPrint("\tInvalid successor", child);
                 }
             }
-            System.out.println("Back away, bro");
             // implicit backtracking happens here
         }
         return Optional.empty();
