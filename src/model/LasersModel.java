@@ -4,6 +4,7 @@ import backtracking.SafeConfig;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
@@ -30,7 +31,10 @@ public class LasersModel extends Observable {
     //Hash map of pillar locations. Key is location and value is num of required lasers
     //Key is same as laser hash map
     private HashMap<String, Pillar> pillarHash;
+    //File to read from
     public String fileName;
+    //File name to display in GUI
+    public String messageFile;
     // invalid coordinates for Verify(); int[0] = row; int[1] = col
     private int[] invalidCoordinates = new int[2];
     // new message state (helpful for update() for GUI)
@@ -71,6 +75,7 @@ public class LasersModel extends Observable {
      */
     public LasersModel(String filename) throws FileNotFoundException {
         fileName = filename;
+        messageFile = Paths.get(filename).getFileName().toString();
         invalidCoordinates[0] = -1;
         invalidCoordinates[1] = -1;
         message = filename + "loaded";
@@ -122,10 +127,12 @@ public class LasersModel extends Observable {
      */
     public void Add(int row, int col) {
         if (!validCoordinates(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            message = "Error adding laser at: (" + row + ", " + col + ")";
+            announceChange();
             return;
         } else if (isOccupied(row, col)) {
-            System.out.printf("Error adding laser at: (%d, %d)\n", row, col);
+            message = "Error removing laser at: (" + row +", " + col + ")";
+            announceChange();
             return;
         }
         //Set coordinates to a laser
@@ -159,10 +166,12 @@ public class LasersModel extends Observable {
      */
     public void Remove(int row, int col) {
         if (!validCoordinates(row, col)) {
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            message = "Error removing laser at: (" + row + ", " + col + ")";
+            announceChange();
             return;
         } else if (lGrid[row][col] != LASER) {
-            System.out.printf("Error removing laser at: (%d, %d)\n", row, col);
+            message = "Error removing laser at: (" + row + ", " + col + ")";
+            announceChange();
             return;
         }
         //Set coordinates to empty
@@ -444,7 +453,7 @@ public class LasersModel extends Observable {
                 }
             }
             in.close();
-            message = filename+" has been reset";
+            message = messageFile + " has been reset";
             announceChange();
         } catch (FileNotFoundException e) {}
     }

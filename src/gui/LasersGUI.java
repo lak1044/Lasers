@@ -260,7 +260,7 @@ public class LasersGUI extends Application implements Observer {
                 Optional sol = new Backtracker(false).solve(new SafeConfig(model.fileName));
                 if (sol.isPresent()){
                     SafeConfig solution = (SafeConfig)sol.get();
-                    this.model.message= this.model.fileName+" solved";
+                    this.model.message= this.model.messageFile + " solved";
                     this.model.copySafeconfig(solution);
 
                 }
@@ -287,7 +287,7 @@ public class LasersGUI extends Application implements Observer {
         // TODO
 
         borderPane = new BorderPane();
-        message = (model.fileName + " loaded");
+        message = (model.messageFile + " loaded");
         status = new Label(message);
         status.setAlignment(Pos.CENTER);
         borderPane.setTop(status);
@@ -401,15 +401,13 @@ public class LasersGUI extends Application implements Observer {
     private void Load(){
         FileChooser fileChooser = new FileChooser();
         //String loadName;
-        File loadFile = fileChooser.showOpenDialog(stage);
+        File loadFile = fileChooser.showOpenDialog(null);
         //Paths.get(loadName).getFileName().toString();
 
 
 
         if (loadFile!=null) {
-            String loadPath = loadFile.toString();
-            String loadName = Paths.get(loadPath).getFileName().toString();
-            System.out.println("file loaded " + loadName);
+            String loadName = loadFile.toString();
             try {
                 this.model = new LasersModel(loadName);
                 stage.sizeToScene();
@@ -420,6 +418,7 @@ public class LasersGUI extends Application implements Observer {
                 borderPane.setTop(status);
                 borderPane.setCenter(constructSafeGrid());
                 borderPane.setBottom(constructCommandButtons());
+                model.addObserver(this);
 
                 Scene scene = new Scene(borderPane);
                 stage.setScene(scene);
