@@ -24,7 +24,7 @@ import ptui.LasersPTUI;
  */
 public class Lasers {
     /** The 2 modes are GUI and PTUI */
-    public enum UIMode { GUI, PTUI, UNKNOWN };
+    public enum UIMode { GUI, PTUI, UNKNOWN }
 
     /**
      * Displays the usage message and exits the program.

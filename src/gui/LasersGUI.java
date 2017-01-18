@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -302,8 +301,6 @@ public class LasersGUI extends Application implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        // TODO
-
         status.setText(message);
 
         for (int i=0; i<model.rows; i++) {
