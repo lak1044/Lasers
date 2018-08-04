@@ -30,7 +30,7 @@ public class Lasers {
      * Displays the usage message and exits the program.
      */
     private static void usage() {
-        System.err.println("Usage: java Lasers (gui | ptui) safe-file [input]");
+        System.err.println("Usage: java Lasers (GUI | PTUI) safe-file [input]");
         System.exit(-1);
     }
 
@@ -57,7 +57,8 @@ public class Lasers {
                 }
                 break;
             default:
-                usage();
+                mode = UIMode.GUI;
+                safeFile = "C:\\Repos\\Lasers\\tests\\7x7safe.txt";
         }
 
         // now either launch the GUI or create the PTUI and pass control to it
